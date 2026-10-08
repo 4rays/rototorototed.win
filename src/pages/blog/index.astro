@@ -1,0 +1,50 @@
+---
+import {getCollection} from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import {defaultLocale} from "@/i18n/constants";
+import {useTranslations} from "@/i18n/utils";
+
+// Blog lives in the default locale only. To localize posts, key the
+// collection by locale (e.g. src/content/blog/ja/*.md) and filter here.
+const t = useTranslations(defaultLocale);
+
+const posts = (await getCollection("blog", ({data}) => !data.isArchived)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<PageLayout
+  title={t.blog.title}
+  description={t.blog.description}
+  locale={defaultLocale}
+  localized={false}
+>
+  <h1 class="text-foreground text-4xl font-bold tracking-tight">
+    {t.blog.title}
+  </h1>
+  <p class="text-muted-foreground mt-2">{t.blog.description}</p>
+
+  <ul class="mt-10 space-y-6">
+    {posts.map((post) => (
+      <li>
+        <a
+          href={`/blog/${post.id}/`}
+          class="group block rounded-xl border bg-card p-6 shadow-sm transition-colors hover:border-ring/50"
+        >
+          <p class="text-muted-foreground text-sm">
+            <FormattedDate date={post.data.pubDate} locale={defaultLocale} />
+          </p>
+          <h2 class="text-foreground group-hover:text-primary mt-1 text-xl font-semibold transition-colors">
+            {post.data.title}
+          </h2>
+          {post.data.description && (
+            <p class="text-muted-foreground mt-2 text-sm">
+              {post.data.description}
+            </p>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+</PageLayout>

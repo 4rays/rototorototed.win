@@ -1,0 +1,59 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import Card from "@/components/Card.astro";
+import {
+  getLocaleFromParams,
+  getLocaleStaticPaths,
+  localizeUrl,
+  useTranslations
+} from "@/i18n/utils";
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const t = useTranslations(locale);
+
+const features = [
+  t.home.features.content,
+  t.home.features.i18n,
+  t.home.features.theming,
+  t.home.features.static
+];
+---
+
+<PageLayout
+  title={t.home.title}
+  description={t.home.description}
+  locale={locale}
+>
+  <section class="py-16 text-center sm:py-24">
+    <h1 class="text-foreground text-5xl font-bold tracking-tight text-balance sm:text-6xl">
+      {t.home.tagline}
+    </h1>
+    <p class="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg/8">
+      {t.home.description}
+    </p>
+    <div class="mt-10">
+      <a
+        href={localizeUrl("/blog", locale)}
+        class="bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center rounded-xl px-6 py-3 text-sm font-semibold shadow-sm transition-opacity"
+      >
+        {t.home.cta}
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      {features.map((feature) => (
+        <Card
+          href={localizeUrl("/blog", locale)}
+          title={feature.title}
+          body={feature.description}
+        />
+      ))}
+    </ul>
+  </section>
+</PageLayout>

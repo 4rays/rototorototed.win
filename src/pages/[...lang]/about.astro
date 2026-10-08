@@ -1,0 +1,32 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import {
+  getLocaleFromParams,
+  getLocaleStaticPaths,
+  useTranslations
+} from "@/i18n/utils";
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const t = useTranslations(locale);
+---
+
+<PageLayout
+  title={t.about.title}
+  description={t.about.description}
+  locale={locale}
+>
+  <article class="prose dark:prose-invert max-w-none">
+    <h1>{t.about.title}</h1>
+    <p>{t.about.description}</p>
+    <p>
+      Replace this page with your own content. It lives at
+      <code>src/pages/[...lang]/about.astro</code> and renders once per locale —
+      at <code>/about</code> for the default locale and
+      <code>/ja/about</code> for Japanese.
+    </p>
+  </article>
+</PageLayout>

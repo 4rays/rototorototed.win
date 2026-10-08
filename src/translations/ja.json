@@ -1,0 +1,66 @@
+{
+  "site": {
+    "title": "Rototo",
+    "description": "rototorototed.win の Rototo ランディングページ。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "about": "概要",
+    "blog": "ブログ"
+  },
+  "home": {
+    "title": "Rototo",
+    "tagline": "Rototo のランディングページ。",
+    "description": "コンテンツサイト、ブログ、ランディングページのためのAstroスターター。型安全なi18n、ダークモード、MDX、RSS、サイトマップを標準搭載。",
+    "cta": "ブログを読む",
+    "features": {
+      "content": {
+        "title": "コンテンツコレクション",
+        "description": "フロントマター検証付きの型安全なMarkdown/MDX、RSS、サイトマップ。"
+      },
+      "i18n": {
+        "title": "型安全なi18n",
+        "description": "ロケールプレフィックス付きルートとコンパイル時に検証される翻訳。"
+      },
+      "theming": {
+        "title": "トークン型テーマ",
+        "description": "Tailwind CSS 4上に構築された、ライト/ダークモード対応のセマンティックカラートークン。"
+      },
+      "static": {
+        "title": "完全に静的",
+        "description": "任意の静的ホストにデプロイできるプレーンなHTML出力。サーバーもシークレットも不要。"
+      }
+    }
+  },
+  "about": {
+    "title": "概要",
+    "description": "このサイトについて。"
+  },
+  "blog": {
+    "title": "ブログ",
+    "description": "最新の投稿。",
+    "readMore": "続きを読む",
+    "lastUpdatedOn": "最終更新:",
+    "archived": "この投稿はアーカイブされました。以下の情報の一部または全部が現在では当てはまらない可能性があります。"
+  },
+  "language": {
+    "label": "言語"
+  },
+  "theme": {
+    "label": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システム"
+  },
+  "footer": {
+    "builtWith": "Built with Astro"
+  },
+  "error": {
+    "404": {
+      "title": "404",
+      "subtitle": "ページが見つかりません",
+      "message": "お探しのページは見つかりませんでした。前のページに戻るか、ホームページにお進みください。"
+    },
+    "goHome": "ホームへ戻る"
+  }
+}

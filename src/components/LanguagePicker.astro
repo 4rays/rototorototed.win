@@ -1,0 +1,53 @@
+---
+import {Languages} from "@lucide/astro";
+import type {Locale} from "@/i18n/constants";
+import {localeNames, locales} from "@/i18n/constants";
+import {localizeUrl, useTranslations} from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+}
+
+const {locale} = Astro.props;
+const t = useTranslations(locale);
+
+// Strip the current locale prefix to get the bare path, then re-localize it
+// for each target locale.
+const segments = Astro.url.pathname.split("/").filter(Boolean);
+if (locales.includes(segments[0] as Locale)) {
+  segments.shift();
+}
+const barePath = `/${segments.join("/")}`;
+---
+
+<div class="relative">
+  <label for="languageSelect" class="sr-only">
+    {t.language.label}
+  </label>
+  <select
+    id="languageSelect"
+    class="bg-card text-card-foreground focus:border-ring block w-full appearance-none rounded-xl border p-2.5 pr-10 text-sm shadow-sm transition-colors focus:outline-none"
+  >
+    {locales.map((l) => (
+      <option value={localizeUrl(barePath, l)} selected={l === locale}>
+        {localeNames[l]}
+      </option>
+    ))}
+  </select>
+
+  <span class="pointer-events-none absolute top-1/2 right-3 grid size-5 -translate-y-1/2 place-items-center">
+    <Languages class="text-muted-foreground" size={18} stroke-width={1.8} />
+  </span>
+</div>
+
+<script>
+  const select = document.getElementById("languageSelect");
+
+  select?.addEventListener("change", (event) => {
+    const target = event.target as HTMLSelectElement;
+    const isSecure = window.location.protocol === "https:";
+    const locale = target.value.split("/").filter(Boolean)[0] ?? "en";
+    document.cookie = `preferred_lang=${locale};path=/;max-age=31536000;SameSite=Lax${isSecure ? ";Secure" : ""}`;
+    window.location.href = target.value;
+  });
+</script>

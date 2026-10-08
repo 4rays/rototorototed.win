@@ -1,0 +1,62 @@
+---
+import type {Locale} from "@/i18n/constants";
+import {localizeUrl, useTranslations} from "@/i18n/utils";
+import LanguagePicker from "@/components/LanguagePicker.astro";
+import ThemeSelect from "@/components/ThemeSelect.astro";
+
+interface Props {
+  locale: Locale;
+  // Set to false on routes that only exist in the default locale (e.g. the
+  // blog) so the language picker doesn't offer links to non-existent pages.
+  localized?: boolean;
+}
+
+const {locale, localized = true} = Astro.props;
+const t = useTranslations(locale);
+
+const navItems = [
+  {href: localizeUrl("/", locale), label: t.nav.home},
+  {href: localizeUrl("/blog", locale), label: t.nav.blog},
+  {href: localizeUrl("/about", locale), label: t.nav.about}
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="border-border border-b">
+  <div class="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-4">
+    <a
+      href={localizeUrl("/", locale)}
+      class="text-foreground text-lg font-bold tracking-wide transition-opacity hover:opacity-70"
+    >
+      {t.site.title}
+    </a>
+
+    <nav class="hidden items-center gap-6 sm:flex">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            "hover:text-foreground text-sm transition-colors",
+            currentPath === item.href
+              ? "text-foreground font-semibold"
+              : "text-muted-foreground"
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      {localized && (
+        <div class="w-28">
+          <LanguagePicker locale={locale} />
+        </div>
+      )}
+      <div class="w-28">
+        <ThemeSelect locale={locale} />
+      </div>
+    </div>
+  </div>
+</header>

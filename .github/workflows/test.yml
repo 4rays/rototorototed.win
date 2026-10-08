@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check-and-build:
+    name: Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Every check below runs even if an earlier one failed, so a single CI
+      # run reports every problem at once.
+      - name: Check formatting
+        if: ${{ !cancelled() }}
+        run: pnpm format:check
+
+      - name: Type check
+        if: ${{ !cancelled() }}
+        run: pnpm check
+
+      - name: Build
+        if: ${{ !cancelled() }}
+        run: pnpm build

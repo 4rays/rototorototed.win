@@ -1,0 +1,89 @@
+---
+import {Moon, Sun} from "@lucide/astro";
+import type {Locale} from "@/i18n/constants";
+import {useTranslations} from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+}
+
+const {locale} = Astro.props;
+const t = useTranslations(locale);
+---
+
+<div class="relative">
+  <label for="themeSelect" class="sr-only">
+    {t.theme.label}
+  </label>
+  <select
+    id="themeSelect"
+    class="bg-card text-card-foreground focus:border-ring block w-full appearance-none rounded-xl border p-2.5 pr-10 text-sm shadow-sm transition-colors focus:outline-none"
+  >
+    <option value="system">{t.theme.system}</option>
+    <option value="light">{t.theme.light}</option>
+    <option value="dark">{t.theme.dark}</option>
+  </select>
+
+  <span class="pointer-events-none absolute top-1/2 right-3 grid size-5 -translate-y-1/2 place-items-center">
+    <Sun class="theme-icon sun" size={20} stroke-width={1.8} />
+    <Moon class="theme-icon moon" size={20} stroke-width={1.8} />
+  </span>
+</div>
+
+<style>
+  .theme-icon {
+    grid-area: 1 / 1;
+    display: block;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .sun {
+    color: var(--muted-foreground);
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .moon {
+    color: var(--accent);
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  :global(.dark) .sun {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  :global(.dark) .moon {
+    opacity: 1;
+    transform: scale(1);
+  }
+</style>
+
+<script>
+  import {
+    applyTheme,
+    getThemePreference,
+    setThemePreference,
+    type Theme
+  } from "@/lib/theme";
+
+  const select = document.getElementById("themeSelect");
+
+  function syncSelect(theme: Theme) {
+    if (select instanceof HTMLSelectElement) {
+      select.value = theme;
+    }
+  }
+
+  const theme = getThemePreference();
+  applyTheme(theme);
+  syncSelect(theme);
+
+  select?.addEventListener("change", (event) => {
+    const value = (event.target as HTMLSelectElement).value as Theme;
+    setThemePreference(value);
+  });
+</script>

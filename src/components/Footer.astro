@@ -1,0 +1,22 @@
+---
+import type {Locale} from "@/i18n/constants";
+import {useTranslations} from "@/i18n/utils";
+import {SITE_AUTHOR} from "@/consts";
+
+interface Props {
+  locale: Locale;
+}
+
+const {locale} = Astro.props;
+const t = useTranslations(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-border mt-16 border-t">
+  <div class="text-muted-foreground mx-auto flex max-w-4xl flex-col items-center justify-between gap-2 px-6 py-8 text-sm sm:flex-row">
+    <p>
+      &copy; {year} {SITE_AUTHOR}
+    </p>
+    <p>{t.footer.builtWith}</p>
+  </div>
+</footer>

@@ -1,0 +1,48 @@
+---
+import type {CollectionEntry} from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import type {Locale} from "@/i18n/constants";
+import {useTranslations} from "@/i18n/utils";
+
+type Props = CollectionEntry<"blog">["data"] & {locale: Locale};
+
+const {title, description, image, pubDate, updatedDate, isArchived, locale} =
+  Astro.props;
+const t = useTranslations(locale);
+---
+
+<PageLayout
+  title={title}
+  description={description}
+  image={image}
+  locale={locale}
+  localized={false}
+>
+  <article class="prose dark:prose-invert max-w-none">
+    <div class="not-prose mb-8">
+      <div class="text-muted-foreground text-sm">
+        <FormattedDate date={pubDate} locale={locale} />
+        {updatedDate && (
+          <span>
+            {" "}
+            &middot; {t.blog.lastUpdatedOn}{" "}
+            <FormattedDate date={updatedDate} locale={locale} />
+          </span>
+        )}
+      </div>
+      <h1 class="text-foreground mt-2 text-4xl font-bold tracking-tight">
+        {title}
+      </h1>
+      <div class="bg-border my-6 h-px"></div>
+    </div>
+    {isArchived && (
+      <div class="not-prose mb-8 rounded-xl border border-yellow-300 bg-yellow-100/80 px-5 py-4 dark:border-yellow-500/35 dark:bg-yellow-500/10">
+        <p class="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+          {t.blog.archived}
+        </p>
+      </div>
+    )}
+    <slot />
+  </article>
+</PageLayout>

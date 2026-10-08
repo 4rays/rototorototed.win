@@ -1,0 +1,64 @@
+# AGENTS.md
+
+This file provides guidance to coding agents working in this repository.
+
+## Project Overview
+
+rototorototed.win is the **landing page for Rototo**, based on the [indigo-static](https://github.com/indigo-ce/indigo-static) template. It produces plain HTML (`output: "static"`, no adapter, no server, no secrets) deployable to any static host.
+
+## Development Commands
+
+Commands marked with **(CI)** run in the `Test` workflow on every pull request.
+
+- `pnpm dev` - Start dev server at localhost:4321
+- `pnpm build` - Build the static site to `./dist/` (CI)
+- `pnpm preview` - Build, then preview the production output locally
+- `pnpm check` - Run Astro/TypeScript diagnostics (CI)
+- `pnpm format` - Format all files with Prettier
+- `pnpm format:check` - Verify Prettier formatting without writing (CI)
+
+## Architecture
+
+### Static-Only
+
+- No adapter, no SSR, no middleware, no API routes. Everything is prerendered at build time.
+- Language preference redirect is necessarily **client-side** (`src/scripts/language-detection.js`) since static hosts can't inspect `Accept-Language`.
+
+### i18n
+
+- Locales: `en` (default, unprefixed paths) and `ja` (prefixed `/ja/`).
+- Localized pages live in `src/pages/[...lang]/` and must export `getStaticPaths` returning `getLocaleStaticPaths()` from `src/i18n/utils.ts`.
+- Translations are JSON files in `src/translations/`; the `Translations` type is inferred from `en.json`, so a missing key in usage is a compile error.
+- Use `localizeUrl()` for every internal link — never hardcode `/ja/`.
+- The blog and RSS feed are default-locale-only by design; see `skills/i18n/SKILL.md` for how to localize them later.
+
+### Content
+
+- Blog posts are a content collection (`src/content/blog/`) with a zod schema in `src/content.config.ts`. Support both `.md` and `.mdx`.
+- RSS feed: `src/pages/feed.xml.ts` renders post bodies through markdown-it and sanitizes the HTML.
+- Sitemap is automatic via `@astrojs/sitemap` — keep `site` in `astro.config.mjs` accurate.
+
+### Theming
+
+- All theme variables live in `src/styles.css` (Tailwind CSS 4, CSS custom properties, `.dark` class strategy).
+- Components must use **semantic tokens** (`bg-background`, `text-muted-foreground`, …), never raw palette colors (`bg-seagull-100`).
+- `SetTheme.astro` must stay in `BaseLayout.astro` — it prevents flash of wrong theme.
+- Fonts are self-hosted via Astro's fonts API (`fonts` in `astro.config.mjs` + `<Font>` in `BaseLayout.astro`); do not add font CDN links.
+
+### SEO
+
+- `BaseLayout.astro` handles canonical URLs, Open Graph, Twitter cards, RSS link, sitemap link.
+- Default social card: `/social-cards/default.jpg` (add one when branding a new site).
+
+## Repository Skills
+
+Procedural guides live in `skills/` as `SKILL.md` files. They are named in no other document, so check them before improvising a procedure:
+
+- `skills/theming/SKILL.md` - The theming system: palettes, semantic tokens, dark mode, typography, rebranding
+- `skills/i18n/SKILL.md` - Translation files, localized pages, locale-aware URLs, adding keys or a new language
+
+## Conventions
+
+- pnpm only. Node >= 22.13.0.
+- Import alias: `@/*` maps to `src/*`.
+- Prettier config: 2 spaces, no bracket spacing, no trailing commas (`bracketSpacing: false`, `trailingComma: "none"`).
