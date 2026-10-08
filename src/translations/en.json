@@ -13,25 +13,7 @@
     "tagline": "Rotate. Reflect. Survive.",
     "description": "Rototo is a 360° arcade duel for iOS — spin your shield to face the swarm, reflect what they throw, and chase the top of the leaderboard.",
     "cta": "Download on the App Store",
-    "ctaNote": "Requires iOS 17+",
-    "features": {
-      "control": {
-        "title": "One-Touch Control",
-        "description": "Rototo pivots to face your finger or mouse. One input, 360° of coverage — line up the shield and let them come."
-      },
-      "swarms": {
-        "title": "Orbiting Swarms",
-        "description": "Breakout turned inside out: enemies circle the arena in escalating waves, and every reflect counts."
-      },
-      "leaderboard": {
-        "title": "Game Center Leaderboards",
-        "description": "Climb the ranks with Game Center high scores, built straight into iOS."
-      },
-      "neon": {
-        "title": "Deep-Space Neon",
-        "description": "Warp streaks, breathing stars, and handcrafted purple — the start screen is only the beginning."
-      }
-    }
+    "ctaNote": "Requires iOS 17+"
   },
   "about": {
     "title": "About",
@@ -43,18 +25,6 @@
     "readMore": "Read more",
     "lastUpdatedOn": "Last updated on",
     "archived": "This post has been archived. Some or all of the information below may no longer be relevant or correct."
-  },
-  "language": {
-    "label": "Language"
-  },
-  "theme": {
-    "label": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
-  },
-  "footer": {
-    "builtWith": "Built with Astro"
   },
   "error": {
     "404": {

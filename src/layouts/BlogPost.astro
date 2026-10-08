@@ -17,9 +17,8 @@ const t = useTranslations(locale);
   description={description}
   image={image}
   locale={locale}
-  localized={false}
 >
-  <article class="prose dark:prose-invert max-w-none">
+  <article class="prose prose-invert max-w-none">
     <div class="not-prose mb-8">
       <div class="text-muted-foreground text-sm">
         <FormattedDate date={pubDate} locale={locale} />
@@ -37,10 +36,8 @@ const t = useTranslations(locale);
       <div class="bg-border my-6 h-px"></div>
     </div>
     {isArchived && (
-      <div class="not-prose mb-8 rounded-xl border border-yellow-300 bg-yellow-100/80 px-5 py-4 dark:border-yellow-500/35 dark:bg-yellow-500/10">
-        <p class="text-sm font-medium text-yellow-900 dark:text-yellow-100">
-          {t.blog.archived}
-        </p>
+      <div class="not-prose mb-8 rounded-xl border border-yellow-500/35 bg-yellow-500/10 px-5 py-4">
+        <p class="text-sm font-medium text-yellow-100">{t.blog.archived}</p>
       </div>
     )}
     <slot />

@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
 import type {Locale} from "@/i18n/constants";
 
 interface Props {
@@ -9,10 +7,9 @@ interface Props {
   description?: string;
   image?: string;
   locale: Locale;
-  localized?: boolean;
 }
 
-const {title, description, image, locale, localized = true} = Astro.props;
+const {title, description, image, locale} = Astro.props;
 ---
 
 <BaseLayout
@@ -24,11 +21,7 @@ const {title, description, image, locale, localized = true} = Astro.props;
   <Fragment slot="head">
     <slot name="head" />
   </Fragment>
-  <div class="flex min-h-screen flex-col">
-    <Header locale={locale} localized={localized} />
-    <main class="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
-      <slot />
-    </main>
-    <Footer locale={locale} />
-  </div>
+  <main class="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
+    <slot />
+  </main>
 </BaseLayout>

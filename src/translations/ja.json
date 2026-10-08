@@ -13,25 +13,7 @@
     "tagline": "回して、弾いて、生き残れ。",
     "description": "Rototo は iOS 向けの 360° アーケードバトル。シールドを回して敵の群れに立ち向かい、弾き返して、ランキングの頂点を目指そう。",
     "cta": "App Storeでダウンロード",
-    "ctaNote": "iOS 17 以上が必要",
-    "features": {
-      "control": {
-        "title": "ワンタッチ操作",
-        "description": "指やマウスに合わせて Rototo が回転。入力はひとつ、守りは 360°。タイミングを合わせて敵を迎え撃て。"
-      },
-      "swarms": {
-        "title": "周回する敵の群れ",
-        "description": "360°に進化したブロック崩し。敵は波となってアリーナを周回し、反射の一つ一つが命運を分ける。"
-      },
-      "leaderboard": {
-        "title": "Game Center ランキング",
-        "description": "iOS に組み込まれた Game Center のハイスコアで順位を競おう。"
-      },
-      "neon": {
-        "title": "深宇宙のネオン",
-        "description": "ワープストリーク、瞬く星、手づくりのパープル。スタート画面はその序章にすぎない。"
-      }
-    }
+    "ctaNote": "iOS 17 以上が必要"
   },
   "about": {
     "title": "概要",
@@ -43,18 +25,6 @@
     "readMore": "続きを読む",
     "lastUpdatedOn": "最終更新:",
     "archived": "この投稿はアーカイブされました。以下の情報の一部または全部が現在では当てはまらない可能性があります。"
-  },
-  "language": {
-    "label": "言語"
-  },
-  "theme": {
-    "label": "テーマ",
-    "light": "ライト",
-    "dark": "ダーク",
-    "system": "システム"
-  },
-  "footer": {
-    "builtWith": "Built with Astro"
   },
   "error": {
     "404": {

@@ -4,15 +4,12 @@
  *
  *   1. Base color        scenes/background/background.tscn  Color(0.1, 0.05, 0.2)
  *   2. Star field        scenes/background/star_field.gd   20 breathing stars
- *   3. Concentric rings  scenes/background/concentric_circles.gd  2 additive groups
+ *   3. Concentric rings  scenes/background/concentric_circles.gd  2 groups
  *   4. Vignette          shaders/vignette.gdshader         smoothstep(0.9, 1.3)
- *   5. Warp streaks      shaders/warp_streaks.gdshader     140 additive lanes,
- *                        emanating from the hero logo (scenes/ui/logo_fx.gd)
  *
  * Godot's stretch mode is canvas_items + expand, so the scene scales uniformly
- * by max(width/1152, height/648) — the same factor is applied here. Streaks
- * track the hero logo's on-screen position; honors prefers-reduced-motion by
- * rendering a single static frame.
+ * by max(width/1152, height/648) — the same factor is applied here. Honors
+ * prefers-reduced-motion by rendering a single static frame.
  */
 
 import starUrl from "@/assets/star.png";
@@ -73,33 +70,12 @@ const CIRCLES: readonly CircleGroup[] = [
   }
 ];
 
-// warp_streaks.gdshader uniforms
-const WARP = {
-  lanes: 140,
-  density: 0.45,
-  speed: 0.35,
-  strength: 0.8,
-  colorA: [0.2, 0.9, 1.0] as const, // cyan
-  colorB: [1.0, 0.25, 0.85] as const, // magenta
-  lenMin: 10.0,
-  lenMax: 260.0
-};
-
 // vignette.gdshader uniforms
 const VIGNETTE = {intensity: 0.42, inner: 0.9, outer: 1.3};
 
-// logo_fx.gd: streaks emerge from drawn.y * 0.35 (logo_rect.w * 0.35 comment)
-const WARP_START_RADIUS_FACTOR = 0.35;
-// logo_neon.gdshader fallback when no logo element is measured
-const WARP_START_RADIUS_FALLBACK = 40;
-
-// --- Small shader-math helpers (float64 versions of the GLSL ones) ----------
+// --- Small helpers ----------------------------------------------------------
 
 const TAU = Math.PI * 2;
-
-function fract(x: number): number {
-  return x - Math.floor(x);
-}
 
 function mix(a: number, b: number, t: number): number {
   return a + (b - a) * t;
@@ -109,24 +85,7 @@ function clamp(x: number, lo: number, hi: number): number {
   return Math.min(Math.max(x, lo), hi);
 }
 
-function smoothstep(edge0: number, edge1: number, x: number): number {
-  const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
-  return t * t * (3 - 2 * t);
-}
-
-// warp_streaks.gdshader hash11
-function hash11(p: number): number {
-  p = fract(p * 0.1031);
-  p *= p + 33.33;
-  p *= p + p;
-  return fract(p);
-}
-
 type RGB = readonly [number, number, number];
-
-function mixRgb(a: RGB, b: RGB, t: number): RGB {
-  return [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)];
-}
 
 function rgba(c: RGB, alpha: number): string {
   const r = Math.round(clamp(c[0], 0, 1) * 255);
@@ -231,16 +190,7 @@ function startGrow(star: Star): void {
 
 // --- Background painter -----------------------------------------------------
 
-export interface StartBackgroundOptions {
-  // Resolved each frame the center is refreshed; the warp streaks radiate
-  // from this element's on-screen center (logo_fx.gd points them at the logo).
-  getCenterEl?: () => Element | null;
-}
-
-export function initStartBackground(
-  canvas: HTMLCanvasElement,
-  options: StartBackgroundOptions = {}
-): () => void {
+export function initStartBackground(canvas: HTMLCanvasElement): () => void {
   const context = canvas.getContext("2d");
   if (!context) return () => {};
   const ctx: CanvasRenderingContext2D = context;
@@ -250,29 +200,13 @@ export function initStartBackground(
 
   const stars: Star[] = Array.from({length: STAR.count}, spawnStar);
   let circleRot = 0;
-  let time = 0;
 
   let w = 0;
   let h = 0;
   let viewScale = 1;
   let vignette: HTMLCanvasElement | null = null;
 
-  // Warp origin in viewport px (logo_fx.gd warp_origin) + emergence radius
-  let warpCenter: readonly [number, number] = [0, 0];
-  let warpStartRadius = WARP_START_RADIUS_FALLBACK;
-  let centerDirty = true;
-
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  function updateCenter(): void {
-    const el = options.getCenterEl?.() ?? null;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    warpCenter = [rect.left + rect.width / 2, rect.top + rect.height / 2];
-    warpStartRadius = rect.height * WARP_START_RADIUS_FACTOR;
-    centerDirty = false;
-  }
 
   function buildVignette(): void {
     // shaders/vignette.gdshader, rendered once per resize into an offscreen
@@ -310,7 +244,6 @@ export function initStartBackground(
     // Godot canvas_items + expand stretch: uniform scale by the max ratio
     viewScale = Math.max(w / DESIGN_W, h / DESIGN_H);
     buildVignette();
-    centerDirty = true;
     // In static (reduced-motion) mode nothing redraws after a resize clears
     // the canvas, so repaint the frozen frame here.
     if (!running) renderStatic();
@@ -371,74 +304,11 @@ export function initStartBackground(
     ctx.drawImage(vignette, 0, 0, w, h);
   }
 
-  function drawWarp(): void {
-    // warp_streaks.gdshader fragment(): lit angular lanes spawn streak heads
-    // that accelerate outward and fade along their length.
-    if (centerDirty) updateCenter();
-    const [cx, cy] = warpCenter;
-    const maxR = Math.hypot(w, h) * 0.6;
-    const laneAngle = TAU / WARP.lanes;
-    ctx.globalCompositeOperation = "lighter";
-    for (let lane = 0; lane < WARP.lanes; lane++) {
-      if (hash11(lane) >= WARP.density) continue;
-      const seed = hash11(lane + 11.7);
-      const speed = WARP.speed * (0.6 + 0.8 * hash11(lane + 3.1));
-      const prog = fract(time * speed + seed);
-      const fade = smoothstep(0, 0.15, prog);
-      if (fade <= 0) continue;
-      const p2 = prog * prog;
-      const head = mix(warpStartRadius, maxR, p2);
-      const tail = Math.max(head - mix(WARP.lenMin, WARP.lenMax, p2), 0);
-      const theta = ((lane + 0.5) / WARP.lanes - 0.5) * TAU;
-      const hueT = 0.5 + 0.5 * Math.sin(theta * 2 - time * 0.6);
-      const neon = mixRgb(WARP.colorA, WARP.colorB, hueT);
-      const alphaHead = WARP.strength * fade;
-      // Thin lanes, a bit wider far from center (lane units -> radians)
-      const halfAt = (r: number) =>
-        (0.14 + 0.3 * clamp(r / maxR, 0, 1)) * laneAngle;
-      const halfHead = halfAt(head);
-      const halfTail = halfAt(tail);
-      const cosT = Math.cos(theta);
-      const sinT = Math.sin(theta);
-      const grad = ctx.createLinearGradient(
-        cx + cosT * head,
-        cy + sinT * head,
-        cx + cosT * tail,
-        cy + sinT * tail
-      );
-      // Brighter toward the head: mix(neon, white, 0.4 * (1 - along))
-      grad.addColorStop(0, rgba(mixRgb(neon, [1, 1, 1], 0.4), alphaHead));
-      grad.addColorStop(1, rgba(neon, 0));
-      ctx.beginPath();
-      ctx.moveTo(
-        cx + Math.cos(theta - halfHead) * head,
-        cy + Math.sin(theta - halfHead) * head
-      );
-      ctx.lineTo(
-        cx + Math.cos(theta + halfHead) * head,
-        cy + Math.sin(theta + halfHead) * head
-      );
-      ctx.lineTo(
-        cx + Math.cos(theta + halfTail) * tail,
-        cy + Math.sin(theta + halfTail) * tail
-      );
-      ctx.lineTo(
-        cx + Math.cos(theta - halfTail) * tail,
-        cy + Math.sin(theta - halfTail) * tail
-      );
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-    }
-    ctx.globalCompositeOperation = "source-over";
-  }
-
   function draw(): void {
     drawBase();
     drawStars();
     drawCircles();
     drawVignette();
-    drawWarp();
   }
 
   // --- Animation loop -------------------------------------------------------
@@ -451,10 +321,8 @@ export function initStartBackground(
     if (!running) return;
     const dt = clamp((now - last) / 1000, 0, 0.1);
     last = now;
-    time += dt;
     circleRot += dt; // concentric_circles.gd accumulates seconds; speeds applied in draw
     for (const star of stars) updateStar(star, dt);
-    if (centerDirty) updateCenter();
     draw();
     raf = requestAnimationFrame(tick);
   }
@@ -472,10 +340,8 @@ export function initStartBackground(
   }
 
   function renderStatic(): void {
-    // One representative frame: stars at full scale, rings unrotated, each
-    // streak frozen at its seed phase.
+    // One representative frame: stars at full scale, rings unrotated.
     for (const star of stars) star.scale = star.target;
-    time = 0;
     draw();
   }
 
@@ -489,23 +355,17 @@ export function initStartBackground(
   }
 
   const onResize = () => resize();
-  const onScroll = () => {
-    centerDirty = true;
-  };
   const onMotionChange = () => applyMotionPreference();
 
   resize();
-  updateCenter();
   applyMotionPreference();
 
   window.addEventListener("resize", onResize);
-  window.addEventListener("scroll", onScroll, {passive: true});
   reducedMotion.addEventListener("change", onMotionChange);
 
   return () => {
     stopLoop();
     window.removeEventListener("resize", onResize);
-    window.removeEventListener("scroll", onScroll);
     reducedMotion.removeEventListener("change", onMotionChange);
   };
 }

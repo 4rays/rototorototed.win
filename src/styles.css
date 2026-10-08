@@ -1,45 +1,18 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@variant dark (&:where(.dark, .dark *));
 
 /* Rototo theme — ported from the game's palette (../rototo-rototed):
    - void:    deep-space purple, background.tscn BaseColor Color(0.1, 0.05, 0.2)
    - beam:    warp-streak cyan, warp_streaks.gdshader color_a vec4(0.2, 0.9, 1.0)
    - pulse:   warp-streak magenta, warp_streaks.gdshader color_b vec4(1.0, 0.25, 0.85)
    - nebula:  UI purple, game_start.tscn SettingsButton font Color(0.4, 0.2, 0.6)
-   The landing page stays dark by default (see SetTheme.astro); light mode is
-   opt-in via the theme picker. */
+   The site is dark-only — a single palette, no light mode or theme switcher. */
 
 :root {
+  color-scheme: dark;
   --radius: 0.625rem;
   --font-sans: var(--font-inter);
   --font-display: var(--font-bungee);
-  --background: var(--color-void-50);
-  --foreground: var(--color-void-900);
-  --card: var(--color-void-10);
-  --card-foreground: var(--color-void-900);
-  --popover: var(--color-void-10);
-  --popover-foreground: var(--color-void-900);
-  --primary: var(--color-pulse-500);
-  --primary-foreground: var(--color-void-10);
-  --secondary: var(--color-void-100);
-  --secondary-foreground: var(--color-void-800);
-  --muted: var(--color-void-100);
-  --muted-foreground: var(--color-void-600);
-  --accent: var(--color-beam-500);
-  --accent-foreground: var(--color-void-950);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0.15 0);
-  --border: var(--color-void-200);
-  --input: var(--color-void-200);
-  --ring: var(--color-pulse-500);
-  /* The game scene is always the game's dark purple, in both themes — text
-     sitting directly on the animated backdrop uses the scene tokens. */
-  --scene: var(--color-void-950);
-  --scene-foreground: var(--color-void-50);
-}
-
-.dark {
   --background: var(--color-void-950);
   --foreground: var(--color-void-100);
   --card: var(--color-void-900);
@@ -59,6 +32,10 @@
   --border: var(--color-void-700);
   --input: var(--color-void-700);
   --ring: var(--color-beam-300);
+  /* The game scene is the page backdrop — text sitting directly on it uses
+     the scene tokens. */
+  --scene: var(--color-void-950);
+  --scene-foreground: var(--color-void-50);
 }
 
 @theme inline {
@@ -156,10 +133,6 @@
   body {
     @apply bg-background text-foreground;
   }
-
-  .dark input {
-    color-scheme: dark;
-  }
 }
 
 /* Neon logo glow — CSS port of shaders/logo_neon.gdshader: white silhouette
@@ -244,10 +217,10 @@
   }
 }
 
-/* Dual-theme Shiki code blocks: swap to the dark theme variables in dark
-   mode (see markdown.shikiConfig.themes in astro.config.mjs). */
-:root.dark .astro-code,
-:root.dark .astro-code span {
+/* Shiki code blocks: the site is dark-only, so always use the dark theme
+   variables (see markdown.shikiConfig.themes in astro.config.mjs). */
+.astro-code,
+.astro-code span {
   color: var(--shiki-dark) !important;
   font-style: var(--shiki-dark-font-style, inherit) !important;
   font-weight: var(--shiki-dark-font-weight, inherit) !important;

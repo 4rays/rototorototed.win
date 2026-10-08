@@ -1,6 +1,5 @@
 ---
 import {Font} from "astro:assets";
-import SetTheme from "@/components/SetTheme.astro";
 import {SITE_TITLE, SITE_DESCRIPTION} from "@/consts";
 import type {Locale} from "@/i18n/constants";
 import {useTranslations} from "@/i18n/utils";
@@ -31,13 +30,12 @@ if (title !== t.site.title) {
 <!doctype html>
 <html lang={locale}>
   <head>
-    <SetTheme />
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark" />
     <meta name="generator" content={Astro.generator} />
     <Font cssVariable="--font-bungee" preload />
     <Font cssVariable="--font-inter" preload />
