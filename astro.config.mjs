@@ -32,13 +32,26 @@ export default defineConfig({
     }
   },
 
-  // Self-hosted webfont, read from @fontsource-variable/inter at build time
-  // and emitted into dist/. The local provider keeps the build free of
-  // network calls to font CDNs. BaseLayout.astro renders
-  // <Font cssVariable="--font-inter" /> to emit the @font-face rules;
-  // --font-sans points at the variable in styles.css. Japanese text stays on
-  // the platform gothic stack since Inter has no CJK coverage.
+  // Self-hosted webfonts, read from local files at build time and emitted
+  // into dist/. The local provider keeps the build free of network calls to
+  // font CDNs. BaseLayout.astro renders <Font> tags to emit the @font-face
+  // rules; --font-sans/--font-display point at the variables in styles.css.
+  // Bungee is the game's own display face (assets/bungee.ttf); Japanese text
+  // stays on the platform gothic stack since neither face has CJK coverage.
   fonts: [
+    {
+      name: "Bungee",
+      cssVariable: "--font-bungee",
+      provider: fontProviders.local(),
+      options: {
+        variants: [
+          {
+            weight: "400",
+            src: ["src/fonts/bungee.ttf"]
+          }
+        ]
+      }
+    },
     {
       name: "Inter",
       cssVariable: "--font-inter",

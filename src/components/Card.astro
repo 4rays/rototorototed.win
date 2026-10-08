@@ -8,7 +8,7 @@ interface Props {
 const {href, title, body} = Astro.props;
 ---
 
-<li class="bg-card text-card-foreground hover:border-ring/50 flex rounded-xl border shadow-sm transition-colors">
+<li class="bg-card/70 text-card-foreground hover:border-ring/50 flex rounded-xl border shadow-sm backdrop-blur-sm transition-colors">
   <a href={href} class="flex flex-col gap-2 p-6">
     <h2 class="text-lg font-semibold">{title}</h2>
     <p class="text-muted-foreground text-sm">{body}</p>

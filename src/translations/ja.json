@@ -10,25 +10,26 @@
   },
   "home": {
     "title": "Rototo",
-    "tagline": "Rototo のランディングページ。",
-    "description": "コンテンツサイト、ブログ、ランディングページのためのAstroスターター。型安全なi18n、ダークモード、MDX、RSS、サイトマップを標準搭載。",
-    "cta": "ブログを読む",
+    "tagline": "回して、弾いて、生き残れ。",
+    "description": "Rototo は iOS 向けの 360° アーケードバトル。シールドを回して敵の群れに立ち向かい、弾き返して、ランキングの頂点を目指そう。",
+    "cta": "App Storeでダウンロード",
+    "ctaNote": "iOS 17 以上が必要",
     "features": {
-      "content": {
-        "title": "コンテンツコレクション",
-        "description": "フロントマター検証付きの型安全なMarkdown/MDX、RSS、サイトマップ。"
+      "control": {
+        "title": "ワンタッチ操作",
+        "description": "指やマウスに合わせて Rototo が回転。入力はひとつ、守りは 360°。タイミングを合わせて敵を迎え撃て。"
       },
-      "i18n": {
-        "title": "型安全なi18n",
-        "description": "ロケールプレフィックス付きルートとコンパイル時に検証される翻訳。"
+      "swarms": {
+        "title": "周回する敵の群れ",
+        "description": "360°に進化したブロック崩し。敵は波となってアリーナを周回し、反射の一つ一つが命運を分ける。"
       },
-      "theming": {
-        "title": "トークン型テーマ",
-        "description": "Tailwind CSS 4上に構築された、ライト/ダークモード対応のセマンティックカラートークン。"
+      "leaderboard": {
+        "title": "Game Center ランキング",
+        "description": "iOS に組み込まれた Game Center のハイスコアで順位を競おう。"
       },
-      "static": {
-        "title": "完全に静的",
-        "description": "任意の静的ホストにデプロイできるプレーンなHTML出力。サーバーもシークレットも不要。"
+      "neon": {
+        "title": "深宇宙のネオン",
+        "description": "ワープストリーク、瞬く星、手づくりのパープル。スタート画面はその序章にすぎない。"
       }
     }
   },

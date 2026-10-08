@@ -5,7 +5,8 @@ export function getThemePreference(): Theme {
     return localStorage.getItem("theme") as Theme;
   }
 
-  return "system";
+  // Dark by default — the Rototo scene only exists in dark
+  return "dark";
 }
 
 export function setThemePreference(theme: Theme): void {

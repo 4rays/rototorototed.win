@@ -1,0 +1,511 @@
+/**
+ * Rototo start-screen background, ported to Canvas 2D from the Godot project
+ * (../rototo-rototed). Paints a fixed full-viewport scene:
+ *
+ *   1. Base color        scenes/background/background.tscn  Color(0.1, 0.05, 0.2)
+ *   2. Star field        scenes/background/star_field.gd   20 breathing stars
+ *   3. Concentric rings  scenes/background/concentric_circles.gd  2 additive groups
+ *   4. Vignette          shaders/vignette.gdshader         smoothstep(0.9, 1.3)
+ *   5. Warp streaks      shaders/warp_streaks.gdshader     140 additive lanes,
+ *                        emanating from the hero logo (scenes/ui/logo_fx.gd)
+ *
+ * Godot's stretch mode is canvas_items + expand, so the scene scales uniformly
+ * by max(width/1152, height/648) — the same factor is applied here. Streaks
+ * track the hero logo's on-screen position; honors prefers-reduced-motion by
+ * rendering a single static frame.
+ */
+
+import starUrl from "@/assets/star.png";
+
+// --- Constants (values lifted from the Godot sources) ----------------------
+
+// Godot design viewport (project.godot)
+const DESIGN_W = 1152;
+const DESIGN_H = 648;
+
+// background.tscn BaseColor ColorRect: Color(0.1, 0.05, 0.2, 1)
+const BASE_RGB = [0.1, 0.05, 0.2] as const;
+
+// star_field.gd defaults with game_start.tscn's BackgroundScene overrides.
+// Sprite scale 0.05..0.08 of the 257px star.png, alpha 0.75, 0.15 rad/s.
+const STAR = {
+  count: 20,
+  minScale: 0.05,
+  maxScale: 0.08,
+  alpha: 0.75,
+  rotationSpeed: 0.15,
+  scaleDurMin: 1.5,
+  scaleDurMax: 3.0,
+  visibleMin: 4.0,
+  visibleMax: 10.0,
+  delayMin: 0.5,
+  delayMax: 3.0,
+  spritePx: 256
+};
+
+interface CircleGroup {
+  // center_offset, num_circles, min/max_radius, circle_color, rotation_speed
+  offset: readonly [number, number];
+  num: number;
+  minR: number;
+  maxR: number;
+  rgba: readonly [number, number, number, number];
+  rotSpeed: number;
+}
+
+// background.tscn ConcentricCircles1 / ConcentricCircles2
+const CIRCLES: readonly CircleGroup[] = [
+  {
+    offset: [-350, -250],
+    num: 5,
+    minR: 300,
+    maxR: 1200,
+    rgba: [0.8, 0, 0.6666668, 0.101960786],
+    rotSpeed: 0.015
+  },
+  {
+    offset: [500, 400],
+    num: 4,
+    minR: 360,
+    maxR: 1100,
+    rgba: [1, 0, 0.8333335, 0.078431375],
+    rotSpeed: -0.012
+  }
+];
+
+// warp_streaks.gdshader uniforms
+const WARP = {
+  lanes: 140,
+  density: 0.45,
+  speed: 0.35,
+  strength: 0.8,
+  colorA: [0.2, 0.9, 1.0] as const, // cyan
+  colorB: [1.0, 0.25, 0.85] as const, // magenta
+  lenMin: 10.0,
+  lenMax: 260.0
+};
+
+// vignette.gdshader uniforms
+const VIGNETTE = {intensity: 0.42, inner: 0.9, outer: 1.3};
+
+// logo_fx.gd: streaks emerge from drawn.y * 0.35 (logo_rect.w * 0.35 comment)
+const WARP_START_RADIUS_FACTOR = 0.35;
+// logo_neon.gdshader fallback when no logo element is measured
+const WARP_START_RADIUS_FALLBACK = 40;
+
+// --- Small shader-math helpers (float64 versions of the GLSL ones) ----------
+
+const TAU = Math.PI * 2;
+
+function fract(x: number): number {
+  return x - Math.floor(x);
+}
+
+function mix(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+function clamp(x: number, lo: number, hi: number): number {
+  return Math.min(Math.max(x, lo), hi);
+}
+
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+  return t * t * (3 - 2 * t);
+}
+
+// warp_streaks.gdshader hash11
+function hash11(p: number): number {
+  p = fract(p * 0.1031);
+  p *= p + 33.33;
+  p *= p + p;
+  return fract(p);
+}
+
+type RGB = readonly [number, number, number];
+
+function mixRgb(a: RGB, b: RGB, t: number): RGB {
+  return [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)];
+}
+
+function rgba(c: RGB, alpha: number): string {
+  const r = Math.round(clamp(c[0], 0, 1) * 255);
+  const g = Math.round(clamp(c[1], 0, 1) * 255);
+  const b = Math.round(clamp(c[2], 0, 1) * 255);
+  return `rgba(${r},${g},${b},${alpha.toFixed(4)})`;
+}
+
+function randfRange(from: number, to: number): number {
+  return from + Math.random() * (to - from);
+}
+
+// --- Star field -------------------------------------------------------------
+
+type StarPhase = "delaying" | "growing" | "holding" | "shrinking";
+
+interface Star {
+  nx: number;
+  ny: number; // position, normalized 0..1 so resize keeps stars in view
+  rot: number;
+  target: number;
+  scale: number;
+  phase: StarPhase;
+  timer: number; // seconds elapsed in the current tween phase
+  dur: number; // current tween duration (grow/shrink)
+  holdFor: number;
+}
+
+// star_field.gd: 3 size categories for depth
+function rollTargetScale(): number {
+  const roll = Math.random();
+  if (roll < 1 / 3) return randfRange(STAR.minScale, 0.07); // small (distant)
+  if (roll < 2 / 3) return randfRange(0.07, 0.1); // medium
+  return randfRange(0.1, STAR.maxScale); // large (close)
+}
+
+function spawnStar(): Star {
+  // _spawn_stars: start at zero scale; half begin growing now, half after a
+  // 0.5–3s delay
+  const delay =
+    Math.random() > 0.5 ? randfRange(STAR.delayMin, STAR.delayMax) : 0;
+  return {
+    nx: Math.random(),
+    ny: Math.random(),
+    rot: randfRange(0, TAU),
+    target: rollTargetScale(),
+    scale: 0,
+    phase: "delaying",
+    timer: 0,
+    dur: delay,
+    holdFor: randfRange(STAR.visibleMin, STAR.visibleMax)
+  };
+}
+
+// Per-frame state machine mirroring the tween chain in star_field.gd
+function updateStar(star: Star, dt: number): void {
+  star.timer += dt;
+  switch (star.phase) {
+    case "delaying":
+      if (star.timer >= star.dur) startGrow(star);
+      break;
+    case "growing": {
+      // EASE_OUT + TRANS_QUAD
+      const t = Math.min(star.timer / star.dur, 1);
+      star.scale = star.target * (1 - (1 - t) * (1 - t));
+      if (t >= 1) {
+        star.phase = "holding";
+        star.timer = 0;
+      }
+      break;
+    }
+    case "holding":
+      star.scale = star.target;
+      if (star.timer >= star.holdFor) {
+        star.phase = "shrinking";
+        star.timer = 0;
+        star.dur = randfRange(STAR.scaleDurMin, STAR.scaleDurMax);
+      }
+      break;
+    case "shrinking": {
+      // EASE_IN + TRANS_QUAD toward zero scale
+      const t = Math.min(star.timer / star.dur, 1);
+      star.scale = star.target * (1 - t * t);
+      if (t >= 1) {
+        // _on_shrink_complete: reposition, then regrow toward the same target
+        star.nx = Math.random();
+        star.ny = Math.random();
+        startGrow(star);
+      }
+      break;
+    }
+  }
+  star.rot += STAR.rotationSpeed * dt;
+}
+
+function startGrow(star: Star): void {
+  star.phase = "growing";
+  star.timer = 0;
+  star.scale = 0;
+  star.dur = randfRange(STAR.scaleDurMin, STAR.scaleDurMax);
+}
+
+// --- Background painter -----------------------------------------------------
+
+export interface StartBackgroundOptions {
+  // Resolved each frame the center is refreshed; the warp streaks radiate
+  // from this element's on-screen center (logo_fx.gd points them at the logo).
+  getCenterEl?: () => Element | null;
+}
+
+export function initStartBackground(
+  canvas: HTMLCanvasElement,
+  options: StartBackgroundOptions = {}
+): () => void {
+  const context = canvas.getContext("2d");
+  if (!context) return () => {};
+  const ctx: CanvasRenderingContext2D = context;
+
+  const starImg = new Image();
+  starImg.src = starUrl.src;
+
+  const stars: Star[] = Array.from({length: STAR.count}, spawnStar);
+  let circleRot = 0;
+  let time = 0;
+
+  let w = 0;
+  let h = 0;
+  let viewScale = 1;
+  let vignette: HTMLCanvasElement | null = null;
+
+  // Warp origin in viewport px (logo_fx.gd warp_origin) + emergence radius
+  let warpCenter: readonly [number, number] = [0, 0];
+  let warpStartRadius = WARP_START_RADIUS_FALLBACK;
+  let centerDirty = true;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function updateCenter(): void {
+    const el = options.getCenterEl?.() ?? null;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    warpCenter = [rect.left + rect.width / 2, rect.top + rect.height / 2];
+    warpStartRadius = rect.height * WARP_START_RADIUS_FACTOR;
+    centerDirty = false;
+  }
+
+  function buildVignette(): void {
+    // shaders/vignette.gdshader, rendered once per resize into an offscreen
+    // canvas: dist = |uv - 0.5| * 2, alpha = smoothstep(0.9, 1.3, dist) * 0.42.
+    const v = document.createElement("canvas");
+    v.width = Math.max(w, 1);
+    v.height = Math.max(h, 1);
+    const vc = v.getContext("2d");
+    if (!vc) return;
+    vc.save();
+    vc.translate(v.width / 2, v.height / 2);
+    vc.scale(v.width / 2, v.height / 2);
+    const g = vc.createRadialGradient(0, 0, 0, 0, 0, 1);
+    g.addColorStop(VIGNETTE.inner / 2, "rgba(0,0,0,0)");
+    // midpoint of the smoothstep ramp
+    g.addColorStop(
+      (VIGNETTE.inner / 2 + VIGNETTE.outer / 2) / 2,
+      "rgba(0,0,0,0.21)"
+    );
+    g.addColorStop(VIGNETTE.outer / 2, `rgba(0,0,0,${VIGNETTE.intensity})`);
+    g.addColorStop(1, `rgba(0,0,0,${VIGNETTE.intensity})`);
+    vc.fillStyle = g;
+    vc.fillRect(-1, -1, 2, 2);
+    vc.restore();
+    vignette = v;
+  }
+
+  function resize(): void {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Godot canvas_items + expand stretch: uniform scale by the max ratio
+    viewScale = Math.max(w / DESIGN_W, h / DESIGN_H);
+    buildVignette();
+    centerDirty = true;
+    // In static (reduced-motion) mode nothing redraws after a resize clears
+    // the canvas, so repaint the frozen frame here.
+    if (!running) renderStatic();
+  }
+
+  function drawBase(): void {
+    ctx.fillStyle = rgba(BASE_RGB, 1);
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawStars(): void {
+    if (!starImg.complete || starImg.naturalWidth === 0) return;
+    const size = STAR.spritePx * viewScale;
+    for (const star of stars) {
+      if (star.scale <= 0) continue;
+      const px = star.nx * w;
+      const py = star.ny * h;
+      const s = size * star.scale;
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(star.rot);
+      ctx.globalAlpha = STAR.alpha;
+      ctx.drawImage(starImg, -s / 2, -s / 2, s, s);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawCircles(): void {
+    // concentric_circles.gd _draw: filled circles, largest first so inner
+    // circles render on top; the offset itself rotates over time. Godot's
+    // draw_circle uses normal alpha blending here (no material is set on the
+    // node), which gives the deep-purple look with subtle rings.
+    const cx = w / 2;
+    const cy = h / 2;
+    for (const group of CIRCLES) {
+      const ang = circleRot * group.rotSpeed; // radians = elapsed s * speed
+      const cos = Math.cos(ang);
+      const sin = Math.sin(ang);
+      const ox =
+        cx + (group.offset[0] * cos - group.offset[1] * sin) * viewScale;
+      const oy =
+        cy + (group.offset[0] * sin + group.offset[1] * cos) * viewScale;
+      const step = (group.maxR - group.minR) / Math.max(group.num, 1);
+      const [r, g, b, a] = group.rgba;
+      ctx.fillStyle = rgba([r, g, b], a);
+      for (let i = group.num - 1; i >= 0; i--) {
+        const radius = (group.minR + i * step) * viewScale;
+        ctx.beginPath();
+        ctx.arc(ox, oy, radius, 0, TAU);
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawVignette(): void {
+    if (!vignette) return;
+    ctx.drawImage(vignette, 0, 0, w, h);
+  }
+
+  function drawWarp(): void {
+    // warp_streaks.gdshader fragment(): lit angular lanes spawn streak heads
+    // that accelerate outward and fade along their length.
+    if (centerDirty) updateCenter();
+    const [cx, cy] = warpCenter;
+    const maxR = Math.hypot(w, h) * 0.6;
+    const laneAngle = TAU / WARP.lanes;
+    ctx.globalCompositeOperation = "lighter";
+    for (let lane = 0; lane < WARP.lanes; lane++) {
+      if (hash11(lane) >= WARP.density) continue;
+      const seed = hash11(lane + 11.7);
+      const speed = WARP.speed * (0.6 + 0.8 * hash11(lane + 3.1));
+      const prog = fract(time * speed + seed);
+      const fade = smoothstep(0, 0.15, prog);
+      if (fade <= 0) continue;
+      const p2 = prog * prog;
+      const head = mix(warpStartRadius, maxR, p2);
+      const tail = Math.max(head - mix(WARP.lenMin, WARP.lenMax, p2), 0);
+      const theta = ((lane + 0.5) / WARP.lanes - 0.5) * TAU;
+      const hueT = 0.5 + 0.5 * Math.sin(theta * 2 - time * 0.6);
+      const neon = mixRgb(WARP.colorA, WARP.colorB, hueT);
+      const alphaHead = WARP.strength * fade;
+      // Thin lanes, a bit wider far from center (lane units -> radians)
+      const halfAt = (r: number) =>
+        (0.14 + 0.3 * clamp(r / maxR, 0, 1)) * laneAngle;
+      const halfHead = halfAt(head);
+      const halfTail = halfAt(tail);
+      const cosT = Math.cos(theta);
+      const sinT = Math.sin(theta);
+      const grad = ctx.createLinearGradient(
+        cx + cosT * head,
+        cy + sinT * head,
+        cx + cosT * tail,
+        cy + sinT * tail
+      );
+      // Brighter toward the head: mix(neon, white, 0.4 * (1 - along))
+      grad.addColorStop(0, rgba(mixRgb(neon, [1, 1, 1], 0.4), alphaHead));
+      grad.addColorStop(1, rgba(neon, 0));
+      ctx.beginPath();
+      ctx.moveTo(
+        cx + Math.cos(theta - halfHead) * head,
+        cy + Math.sin(theta - halfHead) * head
+      );
+      ctx.lineTo(
+        cx + Math.cos(theta + halfHead) * head,
+        cy + Math.sin(theta + halfHead) * head
+      );
+      ctx.lineTo(
+        cx + Math.cos(theta + halfTail) * tail,
+        cy + Math.sin(theta + halfTail) * tail
+      );
+      ctx.lineTo(
+        cx + Math.cos(theta - halfTail) * tail,
+        cy + Math.sin(theta - halfTail) * tail
+      );
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function draw(): void {
+    drawBase();
+    drawStars();
+    drawCircles();
+    drawVignette();
+    drawWarp();
+  }
+
+  // --- Animation loop -------------------------------------------------------
+
+  let raf = 0;
+  let last = 0;
+  let running = false;
+
+  function tick(now: number): void {
+    if (!running) return;
+    const dt = clamp((now - last) / 1000, 0, 0.1);
+    last = now;
+    time += dt;
+    circleRot += dt; // concentric_circles.gd accumulates seconds; speeds applied in draw
+    for (const star of stars) updateStar(star, dt);
+    if (centerDirty) updateCenter();
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function startLoop(): void {
+    if (running) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function stopLoop(): void {
+    running = false;
+    cancelAnimationFrame(raf);
+  }
+
+  function renderStatic(): void {
+    // One representative frame: stars at full scale, rings unrotated, each
+    // streak frozen at its seed phase.
+    for (const star of stars) star.scale = star.target;
+    time = 0;
+    draw();
+  }
+
+  function applyMotionPreference(): void {
+    if (reducedMotion.matches) {
+      stopLoop();
+      renderStatic();
+    } else {
+      startLoop();
+    }
+  }
+
+  const onResize = () => resize();
+  const onScroll = () => {
+    centerDirty = true;
+  };
+  const onMotionChange = () => applyMotionPreference();
+
+  resize();
+  updateCenter();
+  applyMotionPreference();
+
+  window.addEventListener("resize", onResize);
+  window.addEventListener("scroll", onScroll, {passive: true});
+  reducedMotion.addEventListener("change", onMotionChange);
+
+  return () => {
+    stopLoop();
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("scroll", onScroll);
+    reducedMotion.removeEventListener("change", onMotionChange);
+  };
+}

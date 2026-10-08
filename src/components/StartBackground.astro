@@ -1,0 +1,25 @@
+---
+// Fixed full-viewport canvas running the Godot start-screen background port
+// (src/scripts/start-background.ts). Sits behind all page content; text that
+// sits directly on the scene uses the `scene` semantic tokens.
+---
+
+<canvas
+  id="rototo-start-background"
+  aria-hidden="true"
+  class="fixed inset-0 -z-10 h-full w-full"
+></canvas>
+
+<script>
+  import {initStartBackground} from "@/scripts/start-background";
+
+  const canvas = document.getElementById(
+    "rototo-start-background"
+  ) as HTMLCanvasElement | null;
+
+  if (canvas) {
+    initStartBackground(canvas, {
+      getCenterEl: () => document.getElementById("hero-logo")
+    });
+  }
+</script>

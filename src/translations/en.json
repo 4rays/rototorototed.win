@@ -10,25 +10,26 @@
   },
   "home": {
     "title": "Rototo",
-    "tagline": "The Rototo landing page.",
-    "description": "An Astro starter for content sites, blogs, and landing pages — type-safe i18n, dark mode, MDX, RSS, and sitemap out of the box.",
-    "cta": "Read the blog",
+    "tagline": "Rotate. Reflect. Survive.",
+    "description": "Rototo is a 360° arcade duel for iOS — spin your shield to face the swarm, reflect what they throw, and chase the top of the leaderboard.",
+    "cta": "Download on the App Store",
+    "ctaNote": "Requires iOS 17+",
     "features": {
-      "content": {
-        "title": "Content Collections",
-        "description": "Type-safe Markdown and MDX with frontmatter validation, RSS, and sitemap."
+      "control": {
+        "title": "One-Touch Control",
+        "description": "Rototo pivots to face your finger or mouse. One input, 360° of coverage — line up the shield and let them come."
       },
-      "i18n": {
-        "title": "Type-Safe i18n",
-        "description": "Locale-prefixed routes with translations checked at compile time."
+      "swarms": {
+        "title": "Orbiting Swarms",
+        "description": "Breakout turned inside out: enemies circle the arena in escalating waves, and every reflect counts."
       },
-      "theming": {
-        "title": "Token-Based Theming",
-        "description": "Semantic color tokens with light and dark modes, built on Tailwind CSS 4."
+      "leaderboard": {
+        "title": "Game Center Leaderboards",
+        "description": "Climb the ranks with Game Center high scores, built straight into iOS."
       },
-      "static": {
-        "title": "Fully Static",
-        "description": "Plain HTML output you can deploy to any static host. No server, no secrets."
+      "neon": {
+        "title": "Deep-Space Neon",
+        "description": "Warp streaks, breathing stars, and handcrafted purple — the start screen is only the beginning."
       }
     }
   },

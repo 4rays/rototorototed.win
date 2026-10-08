@@ -1,12 +1,15 @@
 ---
 import PageLayout from "@/layouts/PageLayout.astro";
 import Card from "@/components/Card.astro";
+import StartBackground from "@/components/StartBackground.astro";
+import {APP_STORE_URL} from "@/consts";
 import {
   getLocaleFromParams,
   getLocaleStaticPaths,
   localizeUrl,
   useTranslations
 } from "@/i18n/utils";
+import logoUrl from "@/assets/logo.svg";
 
 export function getStaticPaths() {
   return getLocaleStaticPaths();
@@ -16,10 +19,10 @@ const locale = getLocaleFromParams(Astro.params);
 const t = useTranslations(locale);
 
 const features = [
-  t.home.features.content,
-  t.home.features.i18n,
-  t.home.features.theming,
-  t.home.features.static
+  t.home.features.control,
+  t.home.features.swarms,
+  t.home.features.leaderboard,
+  t.home.features.neon
 ];
 ---
 
@@ -28,24 +31,45 @@ const features = [
   description={t.home.description}
   locale={locale}
 >
-  <section class="py-16 text-center sm:py-24">
-    <h1 class="text-foreground text-5xl font-bold tracking-tight text-balance sm:text-6xl">
-      {t.home.tagline}
+  <StartBackground />
+
+  <!-- Start screen: logo with neon glow, tagline, App Store CTA -->
+  <section class="relative flex min-h-svh flex-col items-center justify-center gap-7 px-6 py-20 text-center">
+    <h1 class="flex justify-center">
+      <img
+        id="hero-logo"
+        src={logoUrl.src}
+        alt={t.site.title}
+        width="1811"
+        height="532"
+        class="logo-neon w-64 sm:w-80 md:w-[26rem]"
+        loading="eager"
+        decoding="async"
+      />
     </h1>
-    <p class="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg/8">
+    <p class="text-scene-foreground font-display text-2xl tracking-wide sm:text-3xl">
+      {t.home.tagline}
+    </p>
+    <p class="text-scene-foreground/75 max-w-xl text-base/7 sm:text-lg/8">
       {t.home.description}
     </p>
-    <div class="mt-10">
+    <div class="mt-2 flex flex-col items-center gap-3">
       <a
-        href={localizeUrl("/blog", locale)}
-        class="bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center rounded-xl px-6 py-3 text-sm font-semibold shadow-sm transition-opacity"
+        href={APP_STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-arcade pulse-arcade text-xl sm:text-2xl"
       >
         {t.home.cta}
       </a>
+      <p class="text-scene-foreground/50 font-mono text-xs tracking-wide">
+        {t.home.ctaNote}
+      </p>
     </div>
   </section>
 
-  <section>
+  <!-- Features -->
+  <section class="relative mx-auto w-full max-w-4xl px-6 pb-24">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2">
       {features.map((feature) => (
         <Card

@@ -2,103 +2,123 @@
 @plugin "@tailwindcss/typography";
 @variant dark (&:where(.dark, .dark *));
 
+/* Rototo theme — ported from the game's palette (../rototo-rototed):
+   - void:    deep-space purple, background.tscn BaseColor Color(0.1, 0.05, 0.2)
+   - beam:    warp-streak cyan, warp_streaks.gdshader color_a vec4(0.2, 0.9, 1.0)
+   - pulse:   warp-streak magenta, warp_streaks.gdshader color_b vec4(1.0, 0.25, 0.85)
+   - nebula:  UI purple, game_start.tscn SettingsButton font Color(0.4, 0.2, 0.6)
+   The landing page stays dark by default (see SetTheme.astro); light mode is
+   opt-in via the theme picker. */
+
 :root {
   --radius: 0.625rem;
   --font-sans: var(--font-inter);
-  --background: var(--color-seagull-10);
-  --foreground: var(--color-seagull-900);
-  --card: var(--color-seagull-20);
-  --card-foreground: var(--color-seagull-900);
-  --popover: var(--color-seagull-20);
-  --popover-foreground: var(--color-seagull-900);
-  --primary: var(--color-hyacinth-500);
-  --primary-foreground: var(--color-seagull-50);
-  --secondary: var(--color-seagull-100);
-  --secondary-foreground: var(--color-seagull-800);
-  --muted: var(--color-seagull-100);
-  --muted-foreground: var(--color-seagull-600);
-  --accent: var(--color-hyacinth-500);
-  --accent-foreground: var(--color-seagull-50);
+  --font-display: var(--font-bungee);
+  --background: var(--color-void-50);
+  --foreground: var(--color-void-900);
+  --card: var(--color-void-10);
+  --card-foreground: var(--color-void-900);
+  --popover: var(--color-void-10);
+  --popover-foreground: var(--color-void-900);
+  --primary: var(--color-pulse-500);
+  --primary-foreground: var(--color-void-10);
+  --secondary: var(--color-void-100);
+  --secondary-foreground: var(--color-void-800);
+  --muted: var(--color-void-100);
+  --muted-foreground: var(--color-void-600);
+  --accent: var(--color-beam-500);
+  --accent-foreground: var(--color-void-950);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0.15 0);
-  --border: var(--color-seagull-200);
-  --input: var(--color-seagull-200);
-  --ring: var(--color-hyacinth-500);
+  --border: var(--color-void-200);
+  --input: var(--color-void-200);
+  --ring: var(--color-pulse-500);
+  /* The game scene is always the game's dark purple, in both themes — text
+     sitting directly on the animated backdrop uses the scene tokens. */
+  --scene: var(--color-void-950);
+  --scene-foreground: var(--color-void-50);
 }
 
 .dark {
-  --background: var(--color-seagull-950);
-  --foreground: var(--color-seagull-100);
-  --card: var(--color-seagull-950);
-  --card-foreground: var(--color-seagull-100);
-  --popover: var(--color-seagull-950);
-  --popover-foreground: var(--color-seagull-100);
-  --primary: var(--color-hyacinth-500);
-  --primary-foreground: var(--color-seagull-950);
-  --secondary: var(--color-seagull-900);
-  --secondary-foreground: var(--color-seagull-200);
-  --muted: var(--color-seagull-900);
-  --muted-foreground: var(--color-seagull-400);
-  --accent: var(--color-hyacinth-500);
-  --accent-foreground: var(--color-seagull-950);
+  --background: var(--color-void-950);
+  --foreground: var(--color-void-100);
+  --card: var(--color-void-900);
+  --card-foreground: var(--color-void-100);
+  --popover: var(--color-void-900);
+  --popover-foreground: var(--color-void-100);
+  --primary: var(--color-pulse-400);
+  --primary-foreground: var(--color-void-950);
+  --secondary: var(--color-void-800);
+  --secondary-foreground: var(--color-void-200);
+  --muted: var(--color-void-800);
+  --muted-foreground: var(--color-void-400);
+  --accent: var(--color-beam-300);
+  --accent-foreground: var(--color-void-950);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.985 0.002 247.839);
-  --border: var(--color-seagull-800);
-  --input: var(--color-seagull-800);
-  --ring: var(--color-hyacinth-500);
+  --border: var(--color-void-700);
+  --input: var(--color-void-700);
+  --ring: var(--color-beam-300);
 }
 
 @theme inline {
   /* Typography */
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
 
   /* Color Palette */
-  --color-seagull-10: oklch(0.9965 0.0182 225.69);
-  --color-seagull-20: oklch(0.9844 0.0213 225.69);
-  --color-seagull-50: oklch(0.9563 0.0277 225.69);
-  --color-seagull-100: oklch(0.9326 0.0416 228.38);
-  --color-seagull-200: oklch(0.8854 0.0693 232.15);
-  --color-seagull-300: oklch(0.8146 0.104 234.92);
-  --color-seagull-400: oklch(0.7401 0.1246 236.46);
-  --color-seagull-500: oklch(0.6656 0.1453 237);
-  --color-seagull-600: oklch(0.5911 0.166 237.54);
-  --color-seagull-700: oklch(0.5166 0.1867 238.08);
-  --color-seagull-800: oklch(0.4421 0.2074 238.62);
-  --color-seagull-900: oklch(0.3676 0.2281 239.16);
-  --color-seagull-950: oklch(0.18 0.13 239.58);
-  --color-hyacinth-50: oklch(0.9563 0.0523 279.6005);
-  --color-hyacinth-100: oklch(0.9326 0.0785 279.6005);
-  --color-hyacinth-200: oklch(0.8854 0.1308 279.6005);
-  --color-hyacinth-300: oklch(0.8146 0.1569 279.6005);
-  --color-hyacinth-400: oklch(0.7401 0.1831 279.6005);
-  --color-hyacinth-500: oklch(0.6198 0.209251 279.6005);
-  --color-hyacinth-600: oklch(0.5453 0.2354 279.6005);
-  --color-hyacinth-700: oklch(0.4708 0.2615 279.6005);
-  --color-hyacinth-800: oklch(0.3963 0.2877 279.6005);
-  --color-hyacinth-900: oklch(0.3218 0.3139 279.6005);
-  --color-hyacinth-950: oklch(0.2355 0.2299 279.6005);
-  --color-asparagus-50: oklch(0.9563 0.0225 131.58);
-  --color-asparagus-100: oklch(0.9326 0.0338 131.58);
-  --color-asparagus-200: oklch(0.8854 0.0563 131.58);
-  --color-asparagus-300: oklch(0.8146 0.0675 131.58);
-  --color-asparagus-400: oklch(0.7401 0.0788 131.58);
-  --color-asparagus-500: oklch(0.6764 0.09 131.58);
-  --color-asparagus-600: oklch(0.6019 0.1013 131.58);
-  --color-asparagus-700: oklch(0.5274 0.1125 131.58);
-  --color-asparagus-800: oklch(0.4529 0.1238 131.58);
-  --color-asparagus-900: oklch(0.3784 0.135 131.58);
-  --color-asparagus-950: oklch(0.2771 0.0989 131.58);
-  --color-earth-50: oklch(0.9563 0.0211 61.96);
-  --color-earth-100: oklch(0.9326 0.0316 61.96);
-  --color-earth-200: oklch(0.8854 0.0527 61.96);
-  --color-earth-300: oklch(0.8146 0.0632 61.96);
-  --color-earth-400: oklch(0.7401 0.0737 61.96);
-  --color-earth-500: oklch(0.5983 0.0843 61.96);
-  --color-earth-600: oklch(0.5238 0.0948 61.96);
-  --color-earth-700: oklch(0.4493 0.1053 61.96);
-  --color-earth-800: oklch(0.3748 0.1158 61.96);
-  --color-earth-900: oklch(0.3003 0.1264 61.96);
-  --color-earth-950: oklch(0.22 0.0926 61.96);
+  --color-void-10: oklch(0.9965 0.0129 294.99);
+  --color-void-20: oklch(0.9844 0.0129 294.99);
+  --color-void-50: oklch(0.9563 0.0129 294.99);
+  --color-void-100: oklch(0.9326 0.0129 294.99);
+  --color-void-200: oklch(0.8854 0.0129 294.99);
+  --color-void-300: oklch(0.8146 0.0129 294.99);
+  --color-void-400: oklch(0.7401 0.0131 294.99);
+  --color-void-500: oklch(0.6656 0.0137 294.99);
+  --color-void-600: oklch(0.5911 0.0158 294.99);
+  --color-void-700: oklch(0.5166 0.0211 294.99);
+  --color-void-800: oklch(0.4421 0.0315 294.99);
+  --color-void-900: oklch(0.3676 0.0467 294.99);
+  --color-void-950: oklch(0.18 0.071 294.99);
+  --color-beam-10: oklch(0.9965 0.0957 209.55);
+  --color-beam-20: oklch(0.9844 0.1013 209.55);
+  --color-beam-50: oklch(0.9563 0.1137 209.55);
+  --color-beam-100: oklch(0.9326 0.1228 209.55);
+  --color-beam-200: oklch(0.8854 0.1353 209.55);
+  --color-beam-300: oklch(0.8146 0.1353 209.55);
+  --color-beam-400: oklch(0.7401 0.1122 209.55);
+  --color-beam-500: oklch(0.6656 0.0779 209.55);
+  --color-beam-600: oklch(0.5911 0.0475 209.55);
+  --color-beam-700: oklch(0.5166 0.028 209.55);
+  --color-beam-800: oklch(0.4421 0.0187 209.55);
+  --color-beam-900: oklch(0.3676 0.0152 209.55);
+  --color-beam-950: oklch(0.18 0.0139 209.55);
+  --color-pulse-10: oklch(0.9965 0.07 337.56);
+  --color-pulse-20: oklch(0.9844 0.0764 337.56);
+  --color-pulse-50: oklch(0.9563 0.0935 337.56);
+  --color-pulse-100: oklch(0.9326 0.1104 337.56);
+  --color-pulse-200: oklch(0.8854 0.1498 337.56);
+  --color-pulse-300: oklch(0.8146 0.213 337.56);
+  --color-pulse-400: oklch(0.7401 0.2601 337.56);
+  --color-pulse-500: oklch(0.6656 0.262 337.56);
+  --color-pulse-600: oklch(0.5911 0.2177 337.56);
+  --color-pulse-700: oklch(0.5166 0.1516 337.56);
+  --color-pulse-800: oklch(0.4421 0.0924 337.56);
+  --color-pulse-900: oklch(0.3676 0.0546 337.56);
+  --color-pulse-950: oklch(0.18 0.028 337.56);
+  --color-nebula-10: oklch(0.9965 0.0196 303.37);
+  --color-nebula-20: oklch(0.9844 0.0198 303.37);
+  --color-nebula-50: oklch(0.9563 0.0202 303.37);
+  --color-nebula-100: oklch(0.9326 0.0207 303.37);
+  --color-nebula-200: oklch(0.8854 0.0227 303.37);
+  --color-nebula-300: oklch(0.8146 0.0298 303.37);
+  --color-nebula-400: oklch(0.7401 0.0465 303.37);
+  --color-nebula-500: oklch(0.6656 0.0761 303.37);
+  --color-nebula-600: oklch(0.5911 0.1149 303.37);
+  --color-nebula-700: oklch(0.5166 0.1486 303.37);
+  --color-nebula-800: oklch(0.4421 0.1601 303.37);
+  --color-nebula-900: oklch(0.3676 0.1428 303.37);
+  --color-nebula-950: oklch(0.18 0.0532 303.37);
 
   /* Theme */
   --radius-sm: calc(var(--radius) - 4px);
@@ -124,6 +144,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-scene: var(--scene);
+  --color-scene-foreground: var(--scene-foreground);
 }
 
 @layer base {
@@ -137,6 +159,88 @@
 
   .dark input {
     color-scheme: dark;
+  }
+}
+
+/* Neon logo glow — CSS port of shaders/logo_neon.gdshader: white silhouette
+   haloed in cyan/magenta that breathes at 0.6 Hz (logo_fx.gd pulse_rate),
+   between glow_min 0.35 and glow_max 1.1. */
+.logo-neon {
+  filter: drop-shadow(
+      0 0 6px color-mix(in oklab, var(--color-beam-300) 40%, transparent)
+    )
+    drop-shadow(
+      0 0 24px color-mix(in oklab, var(--color-pulse-400) 30%, transparent)
+    )
+    drop-shadow(
+      0 0 48px color-mix(in oklab, var(--color-pulse-500) 18%, transparent)
+    );
+  animation: logo-neon-pulse 1.6667s ease-in-out infinite;
+}
+
+@keyframes logo-neon-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(
+        0 0 6px color-mix(in oklab, var(--color-beam-300) 38%, transparent)
+      )
+      drop-shadow(
+        0 0 24px color-mix(in oklab, var(--color-pulse-400) 28%, transparent)
+      )
+      drop-shadow(
+        0 0 48px color-mix(in oklab, var(--color-pulse-500) 16%, transparent)
+      );
+  }
+  50% {
+    filter: drop-shadow(
+        0 0 10px color-mix(in oklab, var(--color-beam-300) 75%, transparent)
+      )
+      drop-shadow(
+        0 0 32px color-mix(in oklab, var(--color-pulse-400) 60%, transparent)
+      )
+      drop-shadow(
+        0 0 64px color-mix(in oklab, var(--color-pulse-500) 38%, transparent)
+      );
+  }
+}
+
+/* Start button — port of scenes/ui/main_button_style.tres + the StartButton
+   styles in game_start.tscn: ink pill, Bungee caps, white on hover, grey on
+   press. Inverts via the scene tokens so it reads the same over the backdrop
+   in both themes. */
+.btn-arcade {
+  @apply bg-scene text-scene-foreground ring-scene-foreground/20 font-display shadow-pulse-500/25 inline-flex items-center justify-center gap-3 rounded-full px-10 py-4 text-lg leading-none tracking-wide shadow-lg transition-colors duration-150 select-none;
+}
+
+.btn-arcade:hover {
+  background: var(--scene-foreground);
+  color: var(--scene);
+}
+
+.btn-arcade:active {
+  background: color-mix(in oklab, var(--scene-foreground) 75%, var(--scene));
+  color: var(--scene);
+}
+
+/* game_start.gd StartButton pulse: 0.6 Hz eased cosine breathing, ±4% scale. */
+.pulse-arcade {
+  animation: arcade-pulse 1.6667s ease-in-out infinite;
+}
+
+@keyframes arcade-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-neon,
+  .pulse-arcade {
+    animation: none;
   }
 }
 
