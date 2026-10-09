@@ -1,0 +1,13 @@
+// Cloudflare Workers static assets: serves the prebuilt ./dist with no
+// Worker script. Workers Builds runs `pnpm run build`, then
+// `npx wrangler deploy`; having this file stops wrangler's autoconfig from
+// running `astro add cloudflare` (the site stays adapter-free).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rototorototed-win",
+  "compatibility_date": "2026-10-09",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

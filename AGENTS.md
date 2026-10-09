@@ -23,6 +23,7 @@ Commands marked with **(CI)** run in the `Test` workflow on every pull request.
 
 - No adapter, no SSR, no middleware, no API routes. Everything is prerendered at build time.
 - Language preference redirect is necessarily **client-side** (`src/scripts/language-detection.js`) since static hosts can't inspect `Accept-Language`.
+- Deployed with Cloudflare Workers Builds (`pnpm run build`, then `npx wrangler deploy`) as static assets only; `wrangler.jsonc` points at `./dist`. Keep that file: without it wrangler's autoconfig runs `astro add cloudflare` and adds an adapter. `workerd` must stay in `allowBuilds` in `pnpm-workspace.yaml`.
 
 ### i18n
 
