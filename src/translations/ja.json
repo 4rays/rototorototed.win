@@ -11,9 +11,11 @@
   "home": {
     "title": "Rototo",
     "tagline": "回して、弾いて、生き残れ。",
-    "description": "Rototo は iOS 向けの 360° アーケードバトル。シールドを回して敵の群れに立ち向かい、弾き返して、ランキングの頂点を目指そう。",
-    "cta": "App Storeでダウンロード",
-    "ctaNote": "iOS 17 以上が必要"
+    "cta": "iOS TestFlight に参加"
+  },
+  "music": {
+    "play": "音楽を再生",
+    "mute": "音楽をミュート"
   },
   "about": {
     "title": "概要",

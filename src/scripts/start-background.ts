@@ -5,7 +5,6 @@
  *   1. Base color        scenes/background/background.tscn  Color(0.1, 0.05, 0.2)
  *   2. Star field        scenes/background/star_field.gd   20 breathing stars
  *   3. Concentric rings  scenes/background/concentric_circles.gd  2 groups
- *   4. Vignette          shaders/vignette.gdshader         smoothstep(0.9, 1.3)
  *
  * Godot's stretch mode is canvas_items + expand, so the scene scales uniformly
  * by max(width/1152, height/648) — the same factor is applied here. Honors
@@ -69,9 +68,6 @@ const CIRCLES: readonly CircleGroup[] = [
     rotSpeed: -0.012
   }
 ];
-
-// vignette.gdshader uniforms
-const VIGNETTE = {intensity: 0.42, inner: 0.9, outer: 1.3};
 
 // --- Small helpers ----------------------------------------------------------
 
@@ -204,35 +200,8 @@ export function initStartBackground(canvas: HTMLCanvasElement): () => void {
   let w = 0;
   let h = 0;
   let viewScale = 1;
-  let vignette: HTMLCanvasElement | null = null;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  function buildVignette(): void {
-    // shaders/vignette.gdshader, rendered once per resize into an offscreen
-    // canvas: dist = |uv - 0.5| * 2, alpha = smoothstep(0.9, 1.3, dist) * 0.42.
-    const v = document.createElement("canvas");
-    v.width = Math.max(w, 1);
-    v.height = Math.max(h, 1);
-    const vc = v.getContext("2d");
-    if (!vc) return;
-    vc.save();
-    vc.translate(v.width / 2, v.height / 2);
-    vc.scale(v.width / 2, v.height / 2);
-    const g = vc.createRadialGradient(0, 0, 0, 0, 0, 1);
-    g.addColorStop(VIGNETTE.inner / 2, "rgba(0,0,0,0)");
-    // midpoint of the smoothstep ramp
-    g.addColorStop(
-      (VIGNETTE.inner / 2 + VIGNETTE.outer / 2) / 2,
-      "rgba(0,0,0,0.21)"
-    );
-    g.addColorStop(VIGNETTE.outer / 2, `rgba(0,0,0,${VIGNETTE.intensity})`);
-    g.addColorStop(1, `rgba(0,0,0,${VIGNETTE.intensity})`);
-    vc.fillStyle = g;
-    vc.fillRect(-1, -1, 2, 2);
-    vc.restore();
-    vignette = v;
-  }
 
   function resize(): void {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -243,7 +212,6 @@ export function initStartBackground(canvas: HTMLCanvasElement): () => void {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     // Godot canvas_items + expand stretch: uniform scale by the max ratio
     viewScale = Math.max(w / DESIGN_W, h / DESIGN_H);
-    buildVignette();
     // In static (reduced-motion) mode nothing redraws after a resize clears
     // the canvas, so repaint the frozen frame here.
     if (!running) renderStatic();
@@ -299,16 +267,10 @@ export function initStartBackground(canvas: HTMLCanvasElement): () => void {
     }
   }
 
-  function drawVignette(): void {
-    if (!vignette) return;
-    ctx.drawImage(vignette, 0, 0, w, h);
-  }
-
   function draw(): void {
     drawBase();
     drawStars();
     drawCircles();
-    drawVignette();
   }
 
   // --- Animation loop -------------------------------------------------------

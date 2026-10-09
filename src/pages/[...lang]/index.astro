@@ -1,7 +1,9 @@
 ---
 import PageLayout from "@/layouts/PageLayout.astro";
 import StartBackground from "@/components/StartBackground.astro";
-import {APP_STORE_URL} from "@/consts";
+import Player from "@/components/Player.astro";
+import MusicToggle from "@/components/MusicToggle.astro";
+import {TESTFLIGHT_URL} from "@/consts";
 import {
   getLocaleFromParams,
   getLocaleStaticPaths,
@@ -17,45 +19,42 @@ const locale = getLocaleFromParams(Astro.params);
 const t = useTranslations(locale);
 ---
 
-<PageLayout
-  title={t.home.title}
-  description={t.home.description}
-  locale={locale}
->
+<PageLayout title={t.home.title} locale={locale}>
   <StartBackground />
+  <MusicToggle locale={locale} />
 
-  <!-- Start screen: logo with neon glow, tagline, App Store CTA -->
-  <section class="relative flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-10 text-center">
-    <h1 class="flex justify-center">
-      <img
-        id="hero-logo"
-        src={logoUrl.src}
-        alt={t.site.title}
-        width="1811"
-        height="532"
-        class="logo-neon w-64 sm:w-80 md:w-[26rem]"
-        loading="eager"
-        decoding="async"
-      />
-    </h1>
-    <p class="text-scene-foreground font-display text-2xl tracking-wide sm:text-3xl">
-      {t.home.tagline}
-    </p>
-    <p class="text-scene-foreground/75 max-w-xl text-base/7 sm:text-lg/8">
-      {t.home.description}
-    </p>
-    <div class="mt-2 flex flex-col items-center gap-3">
+  <!-- Start screen: the player ship following the pointer fills the top two
+       thirds; logo, tagline and TestFlight CTA sit in the bottom third, down
+       by the footer. Rows grow past the viewport when the content needs it,
+       so short screens scroll. -->
+  <section class="relative grid min-h-[calc(100svh-7.5rem)] grid-rows-[2fr_1fr] justify-items-center gap-10 text-center">
+    <div class="flex items-center justify-center">
+      <Player />
+    </div>
+    <div class="flex flex-col items-center gap-6 self-end">
+      <h1 class="flex justify-center">
+        <img
+          id="hero-logo"
+          src={logoUrl.src}
+          alt={t.site.title}
+          width="1811"
+          height="532"
+          class="logo-neon w-52 sm:w-64 md:w-[20.8rem]"
+          loading="eager"
+          decoding="async"
+        />
+      </h1>
+      <p class="text-scene-foreground/75 -mt-2 font-mono text-xs/5 sm:text-sm/6">
+        {t.home.tagline}
+      </p>
       <a
-        href={APP_STORE_URL}
+        href={TESTFLIGHT_URL}
         target="_blank"
         rel="noopener noreferrer"
         class="btn-arcade pulse-arcade text-xl sm:text-2xl"
       >
         {t.home.cta}
       </a>
-      <p class="text-scene-foreground/50 font-mono text-xs tracking-wide">
-        {t.home.ctaNote}
-      </p>
     </div>
   </section>
 </PageLayout>

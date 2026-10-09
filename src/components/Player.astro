@@ -1,0 +1,95 @@
+---
+// Rototo, the player ship, redrawn as SVG from the game's sprites
+// (scenes/player/player.tscn). Units are Godot world units with the origin
+// at the ship's pivot, measured from assets/player.png (scale 0.1, offset
+// -110) and assets/shield.png (scale 0.0803, offset -800, position y 14),
+// plus the full-health dot from scenes/ui/health-circle.gd. Turns to face
+// the pointer at the game's 540°/s rotation_speed.
+---
+
+<svg
+  id="rototo-player"
+  viewBox="-60 -60 120 120"
+  aria-hidden="true"
+  class="size-40 overflow-visible"
+>
+  <defs>
+    <!-- Soft white halo baked into the game's sprites -->
+    <filter
+      id="rototo-player-glow"
+      x="-50%"
+      y="-50%"
+      width="200%"
+      height="200%"
+    >
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g data-player-body>
+    <g
+      fill="none"
+      stroke="white"
+      stroke-linecap="round"
+      filter="url(#rototo-player-glow)"
+    >
+      <!-- Body ring and nose -->
+      <circle r="22.6" stroke-width="6.3" />
+      <line x1="0" y1="-22.6" x2="0" y2="-51.5" stroke-width="6" />
+      <!-- Shield arc: radius 51 around (0, -3.25) -->
+      <path d="M -27.7 -46.1 A 51 51 0 0 1 27.7 -46.1" stroke-width="6.75" />
+    </g>
+    <!-- Health dot at full health -->
+    <circle r="15" fill="white" fill-opacity="0.8" />
+  </g>
+</svg>
+
+<script>
+  const svg = document.getElementById("rototo-player");
+  const body = svg?.querySelector<SVGGElement>("[data-player-body]");
+
+  if (svg && body) {
+    // player.gd rotation_speed, in radians per second
+    const ROTATION_SPEED = (540 * Math.PI) / 180;
+
+    let rotation = 0;
+    let target = 0;
+    let raf = 0;
+    let last = 0;
+
+    function aimAt(x: number, y: number): void {
+      const box = svg!.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      // +90° because the ship's nose points up at rotation 0
+      target = Math.atan2(y - cy, x - cx) + Math.PI / 2;
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    function tick(now: number): void {
+      const dt = Math.min((now - last) / 1000, 0.1);
+      last = now;
+      // Shortest way round, capped at rotation_speed (player.gd _process)
+      const diff =
+        ((((target - rotation + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) %
+          (2 * Math.PI)) -
+        Math.PI;
+      const step = ROTATION_SPEED * dt;
+      rotation =
+        Math.abs(diff) < step ? target : rotation + Math.sign(diff) * step;
+      body!.setAttribute("transform", `rotate(${(rotation * 180) / Math.PI})`);
+      raf = rotation === target ? 0 : requestAnimationFrame(tick);
+    }
+
+    const onPointer = (event: PointerEvent) =>
+      aimAt(event.clientX, event.clientY);
+    window.addEventListener("pointermove", onPointer, {passive: true});
+    window.addEventListener("pointerdown", onPointer, {passive: true});
+  }
+</script>

@@ -10,10 +10,12 @@
   },
   "home": {
     "title": "Rototo",
-    "tagline": "Rotate. Reflect. Survive.",
-    "description": "Rototo is a 360° arcade duel for iOS — spin your shield to face the swarm, reflect what they throw, and chase the top of the leaderboard.",
-    "cta": "Download on the App Store",
-    "ctaNote": "Requires iOS 17+"
+    "tagline": "Rotate. Deflect. Survive.",
+    "cta": "Join iOS TestFlight"
+  },
+  "music": {
+    "play": "Play music",
+    "mute": "Mute music"
   },
   "about": {
     "title": "About",
