@@ -1,5 +1,6 @@
 ---
 import {Font} from "astro:assets";
+import StartBackground from "@/components/StartBackground.astro";
 import {SITE_TITLE, SITE_DESCRIPTION} from "@/consts";
 import {defaultLocale, locales, type Locale} from "@/i18n/constants";
 import {localizeUrl, useTranslations} from "@/i18n/utils";
@@ -50,8 +51,8 @@ const alternates = localized
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <meta name="color-scheme" content="dark" />
-    <!-- Game background base color, Color(0.1, 0.05, 0.2) -->
-    <meta name="theme-color" content="#1a0d33" />
+    <!-- The start-screen scene's dominant purple (--scene-tint) -->
+    <meta name="theme-color" content="#650866" />
     <meta name="generator" content={Astro.generator} />
     <Font cssVariable="--font-bungee" preload />
     <Font cssVariable="--font-inter" preload />
@@ -124,7 +125,10 @@ const alternates = localized
       <meta property="twitter:image" content={new URL(image, Astro.site)} />
     )}
   </head>
-  <body class="bg-background text-foreground min-h-screen">
+  <!-- bg-scene-tint under the scene canvas: Safari 26 tints its status bar
+       and toolbar from the page background, not theme-color. -->
+  <body class="bg-scene-tint text-foreground min-h-screen">
+    <StartBackground />
     <slot />
   </body>
 </html>

@@ -5,13 +5,20 @@
 // -110) and assets/shield.png (scale 0.0803, offset -800, position y 14),
 // plus the full-health dot from scenes/ui/health-circle.gd. Turns to face
 // the pointer at the game's 540°/s rotation_speed.
+
+interface Props {
+  // Sizing classes for the square SVG box
+  class?: string;
+}
+
+const {class: className = "size-40"} = Astro.props;
 ---
 
 <svg
   id="rototo-player"
   viewBox="-60 -60 120 120"
   aria-hidden="true"
-  class="size-40 overflow-visible"
+  class:list={["overflow-visible", className]}
 >
   <defs>
     <!-- Soft white halo baked into the game's sprites -->

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import {PUBLISHER} from "@/consts";
 import type {Locale} from "@/i18n/constants";
 
 interface Props {
@@ -26,7 +27,10 @@ const {title, description, image, locale, localized} = Astro.props;
   <main class="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
     <slot />
   </main>
-  <footer class="text-scene-foreground/50 px-6 pb-6 text-center font-mono text-xs">
-    © 2026 Four Rays AB
-  </footer>
+  <!-- Pages may replace the footer (the home page lays it out as a HUD) -->
+  <slot name="footer">
+    <footer class="text-scene-foreground/50 px-6 pb-6 text-center font-mono text-xs">
+      © 2026 {PUBLISHER}
+    </footer>
+  </slot>
 </BaseLayout>

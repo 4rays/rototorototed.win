@@ -1,6 +1,5 @@
 ---
 import PageLayout from "@/layouts/PageLayout.astro";
-import StartBackground from "@/components/StartBackground.astro";
 import Player from "@/components/Player.astro";
 import MusicToggle from "@/components/MusicToggle.astro";
 import {GAME_NAME, PUBLISHER, TESTFLIGHT_URL} from "@/consts";
@@ -48,41 +47,50 @@ const structuredData = {
     type="application/ld+json"
     set:html={JSON.stringify(structuredData)}
   />
-  <StartBackground />
   <MusicToggle locale={locale} />
 
-  <!-- Start screen: the player ship following the pointer fills the top two
-       thirds; logo, tagline and TestFlight CTA sit in the bottom third, down
-       by the footer. Rows grow past the viewport when the content needs it,
-       so short screens scroll. -->
-  <section class="relative grid min-h-[calc(100svh-7.5rem)] grid-rows-[2fr_1fr] justify-items-center gap-10 text-center">
-    <div class="flex items-center justify-center">
-      <Player />
-    </div>
-    <div class="flex flex-col items-center gap-6 self-end">
-      <h1 class="flex justify-center">
-        <img
-          id="hero-logo"
-          src={logoUrl.src}
-          alt={GAME_NAME}
-          width="1811"
-          height="532"
-          class="logo-neon w-52 sm:w-64 md:w-[20.8rem]"
-          loading="eager"
-          decoding="async"
-        />
-      </h1>
-      <p class="text-scene-foreground/75 -mt-2 font-mono text-xs/5 sm:text-sm/6">
-        {t.home.tagline}
-      </p>
-      <a
-        href={TESTFLIGHT_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-arcade pulse-arcade text-xl sm:text-2xl"
-      >
-        {t.home.cta}
-      </a>
-    </div>
+  <!-- Start screen.
+       Phones: logo, tagline and TestFlight CTA centered; no player ship
+       (there is no pointer to follow).
+       Desktop: a HUD over the scene. The player ship following the pointer
+       dead center, logo over the CTA bottom right, copyright bottom left
+       (centered on the CTA); the mute button stays top right. -->
+  <section class="relative flex min-h-[calc(100svh-7.5rem)] flex-col items-center justify-center gap-4 text-center md:fixed md:right-6 md:bottom-6 md:min-h-0">
+    <h1 class="flex justify-center">
+      <img
+        id="hero-logo"
+        src={logoUrl.src}
+        alt={GAME_NAME}
+        width="1811"
+        height="532"
+        class="logo-neon w-64 md:w-34 lg:w-39"
+        loading="eager"
+        decoding="async"
+      />
+    </h1>
+    <p class="text-scene-foreground/75 font-mono text-xs/5 tracking-widest uppercase sm:text-sm/6 md:hidden">
+      {t.home.tagline}
+    </p>
+    <a
+      href={TESTFLIGHT_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-arcade pulse-arcade mt-6 text-xl sm:text-2xl md:mt-0"
+    >
+      {t.home.cta}
+    </a>
   </section>
+
+  <div class="pointer-events-none fixed inset-0 hidden items-center justify-center md:flex">
+    <Player class="size-48" />
+  </div>
+
+  <!-- Desktop: bottom-6 plus half of the CTA's 3.5rem height, less half a
+       text-xs line, lines the copyright up with the CTA's center. -->
+  <footer
+    slot="footer"
+    class="text-scene-foreground/50 px-6 pb-6 text-center font-mono text-xs md:fixed md:bottom-11 md:left-6 md:p-0"
+  >
+    © 2026 {PUBLISHER}
+  </footer>
 </PageLayout>

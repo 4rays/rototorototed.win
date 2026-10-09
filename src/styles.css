@@ -36,6 +36,11 @@
      the scene tokens. */
   --scene: var(--color-void-950);
   --scene-foreground: var(--color-void-50);
+  /* The scene's dominant on-screen purple (base color under the magenta
+     rings): the page background under the scene canvas, which Safari uses to
+     tint its chrome. Keep in sync with the theme-color meta in
+     BaseLayout.astro (#650866). */
+  --scene-tint: oklch(0.3604 0.1585 327.75);
 }
 
 @theme inline {
@@ -123,6 +128,7 @@
   --color-ring: var(--ring);
   --color-scene: var(--scene);
   --color-scene-foreground: var(--scene-foreground);
+  --color-scene-tint: var(--scene-tint);
 }
 
 @layer base {

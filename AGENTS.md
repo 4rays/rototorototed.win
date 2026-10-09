@@ -43,7 +43,7 @@ Commands marked with **(CI)** run in the `Test` workflow on every pull request.
 
 - All theme variables live in `src/styles.css` (Tailwind CSS 4, CSS custom properties). The site is **dark-only**: a single palette derived from the Rototo game (`void`, `beam`, `pulse`, `nebula` in `@theme inline`). No light mode, no theme switcher, no `.dark` class.
 - Components must use **semantic tokens** (`bg-background`, `text-muted-foreground`, …), never raw palette colors (`bg-pulse-400`).
-- The landing page renders the game's start-screen scene on a fixed canvas (`src/scripts/start-background.ts`, mounted by `StartBackground.astro`); text sitting directly on that scene uses the `scene`/`scene-foreground` tokens, not `foreground`.
+- Every page renders the game's start-screen scene on a fixed canvas (`src/scripts/start-background.ts`, mounted by `StartBackground.astro` in `BaseLayout.astro`); text sitting directly on that scene uses the `scene`/`scene-foreground` tokens, not `foreground`. The body background is `bg-scene-tint` (the scene's dominant purple, mirrored in the `theme-color` meta) because Safari 26 tints its toolbars from it.
 - Fonts are self-hosted via Astro's fonts API (`fonts` in `astro.config.mjs` + `<Font>` in `BaseLayout.astro`); do not add font CDN links. Bungee is the display face (`--font-display`), Inter the body face.
 
 ### SEO
