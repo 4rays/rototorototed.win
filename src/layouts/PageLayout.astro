@@ -7,9 +7,10 @@ interface Props {
   description?: string;
   image?: string;
   locale: Locale;
+  localized?: boolean;
 }
 
-const {title, description, image, locale} = Astro.props;
+const {title, description, image, locale, localized} = Astro.props;
 ---
 
 <BaseLayout
@@ -17,6 +18,7 @@ const {title, description, image, locale} = Astro.props;
   description={description}
   image={image}
   locale={locale}
+  localized={localized}
 >
   <Fragment slot="head">
     <slot name="head" />

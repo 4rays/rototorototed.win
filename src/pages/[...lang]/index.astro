@@ -3,7 +3,7 @@ import PageLayout from "@/layouts/PageLayout.astro";
 import StartBackground from "@/components/StartBackground.astro";
 import Player from "@/components/Player.astro";
 import MusicToggle from "@/components/MusicToggle.astro";
-import {TESTFLIGHT_URL} from "@/consts";
+import {GAME_NAME, PUBLISHER, TESTFLIGHT_URL} from "@/consts";
 import {
   getLocaleFromParams,
   getLocaleStaticPaths,
@@ -17,9 +17,37 @@ export function getStaticPaths() {
 
 const locale = getLocaleFromParams(Astro.params);
 const t = useTranslations(locale);
+
+// schema.org VideoGame for search engines' rich results
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  name: GAME_NAME,
+  alternateName: t.site.title,
+  description: t.home.description,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  image: new URL("/social-cards/default.jpg", Astro.site).href,
+  inLanguage: locale,
+  genre: "Arcade",
+  gamePlatform: "iOS",
+  applicationCategory: "Game",
+  operatingSystem: "iOS 17",
+  installUrl: TESTFLIGHT_URL,
+  publisher: {"@type": "Organization", name: PUBLISHER}
+};
 ---
 
-<PageLayout title={t.home.title} locale={locale}>
+<PageLayout
+  title={t.home.title}
+  description={t.home.description}
+  locale={locale}
+  localized
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(structuredData)}
+  />
   <StartBackground />
   <MusicToggle locale={locale} />
 
@@ -36,7 +64,7 @@ const t = useTranslations(locale);
         <img
           id="hero-logo"
           src={logoUrl.src}
-          alt={t.site.title}
+          alt={GAME_NAME}
           width="1811"
           height="532"
           class="logo-neon w-52 sm:w-64 md:w-[20.8rem]"
