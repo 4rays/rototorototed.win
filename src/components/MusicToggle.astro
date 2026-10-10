@@ -134,6 +134,22 @@ const t = useTranslations(Astro.props.locale);
       }
     });
 
+    // Pause while the page is hidden (app switch, tab change, lock screen)
+    // without touching the saved preference; resume on return only if the
+    // music was playing when the page went away.
+    let pausedForHidden = false;
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        if (!audio.paused) {
+          pausedForHidden = true;
+          audio.pause();
+        }
+      } else if (pausedForHidden) {
+        pausedForHidden = false;
+        if (!readMuted()) audio.play().catch(() => {});
+      }
+    });
+
     if (!readMuted()) {
       audio.play().catch(() => {
         for (const type of unlockEvents) {
