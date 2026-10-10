@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "Rototo",
-    "description": "Rototo: Rototed is a 360° arcade game for iPhone.",
+    "description": "Rototo: Rototed is a space deflector arcade game for iPhone.",
     "imageAlt": "Rototo: Rototed logo with the player ship on a starfield"
   },
   "nav": {
@@ -10,8 +10,8 @@
     "blog": "Blog"
   },
   "home": {
-    "title": "Rototo: Rototed — 360° Arcade Game for iPhone",
-    "description": "Rototo: Rototed is a 360° arcade game for iPhone. Spin your shield, deflect enemy fire back at the swarm, and survive endless waves. Join the iOS TestFlight beta.",
+    "title": "Rototo: Rototed — Space Deflector Arcade Game for iPhone",
+    "description": "Rototo: Rototed is a space deflector arcade game for iPhone. Spin your shield, deflect enemy fire back at the swarm, and survive endless waves. Join the iOS TestFlight beta.",
     "tagline": "Rotate. Deflect. Survive.",
     "cta": "Get TestFlight"
   },

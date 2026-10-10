@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "Rototo",
-    "description": "Rototo: Rototed は iPhone 向けの 360° アーケードゲーム。",
+    "description": "Rototo: Rototed は iPhone 向けのスペース・ディフレクター・アーケードゲーム。",
     "imageAlt": "星空を背景にした Rototo: Rototed のロゴとプレイヤー機"
   },
   "nav": {
@@ -10,8 +10,8 @@
     "blog": "ブログ"
   },
   "home": {
-    "title": "Rototo: Rototed — iPhone 向け 360° アーケードゲーム",
-    "description": "Rototo: Rototed は iPhone 向けの 360° アーケードゲーム。シールドを回して敵の弾を撃ち返し、押し寄せるウェーブを生き延びろ。iOS TestFlight ベータに参加しよう。",
+    "title": "Rototo: Rototed — iPhone 向けスペース・ディフレクター・アーケードゲーム",
+    "description": "Rototo: Rototed は iPhone 向けのスペース・ディフレクター・アーケードゲーム。シールドを回して敵の弾を撃ち返し、押し寄せるウェーブを生き延びろ。iOS TestFlight ベータに参加しよう。",
     "tagline": "回して、弾いて、生き残れ。",
     "cta": "TestFlight で入手"
   },
