@@ -1,0 +1,67 @@
+---
+import InfoLayout from "@/layouts/InfoLayout.astro";
+import {
+  getLocaleFromParams,
+  getLocaleStaticPaths,
+  localizeUrl,
+  useTranslations
+} from "@/i18n/utils";
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const t = useTranslations(locale).support;
+---
+
+<InfoLayout title={t.title} description={t.description} locale={locale}>
+  <p>{t.intro}</p>
+  <p>
+    {t.contact} <a href="mailto:contact@4rays.net">contact@4rays.net</a>
+  </p>
+
+  <h2>{t.faqTitle}</h2>
+  <nav aria-label={t.contentsLabel}>
+    <ul>
+      {t.sections.map((section) => (
+        <li>
+          <a href={`#${section.id}`}>{section.title}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  {t.sections.map((section) => (
+    <section aria-labelledby={section.id}>
+      <h2 id={section.id}>{section.title}</h2>
+      {section.questions.map((faq) => (
+        <>
+          <h3 id={faq.id}>{faq.question}</h3>
+          {faq.paragraphs.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+          {faq.items.length > 0 && (
+            <ul>
+              {faq.items.map((item) => (
+                <li>
+                  <strong>{item.name}</strong> — {item.description}
+                </li>
+              ))}
+            </ul>
+          )}
+          {faq.id === "data" && (
+            <p>
+              <a href={localizeUrl("/privacy", locale)}>{t.privacyLink}</a>
+            </p>
+          )}
+          {faq.id === "bug-report" && (
+            <p>
+              <a href="mailto:contact@4rays.net">contact@4rays.net</a>
+            </p>
+          )}
+        </>
+      ))}
+    </section>
+  ))}
+</InfoLayout>

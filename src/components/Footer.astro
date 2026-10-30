@@ -1,0 +1,46 @@
+---
+import {PUBLISHER} from "@/consts";
+import type {Locale} from "@/i18n/constants";
+import {localizeUrl, useTranslations} from "@/i18n/utils";
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const {locale, class: className} = Astro.props;
+const t = useTranslations(locale);
+---
+
+<footer
+  class:list={[
+    "text-scene-foreground/75 px-6 pb-6 text-left font-mono text-xs",
+    className
+  ]}
+>
+  <p>2026 {PUBLISHER}. All rights reserved.</p>
+  <nav
+    aria-label={t.nav.footer}
+    class="flex flex-wrap justify-start gap-x-5 gap-y-1 text-[0.625rem]"
+  >
+    <a href={localizeUrl("/support", locale)}>{t.nav.support}</a>
+    <a href={localizeUrl("/privacy", locale)}>{t.nav.privacy}</a>
+  </nav>
+</footer>
+
+<style>
+  a {
+    display: inline-flex;
+    min-height: 24px;
+    align-items: center;
+  }
+
+  a:hover {
+    color: var(--scene-foreground);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+</style>

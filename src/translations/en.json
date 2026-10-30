@@ -7,11 +7,15 @@
   "nav": {
     "home": "Home",
     "about": "About",
-    "blog": "Blog"
+    "blog": "Blog",
+    "support": "Support",
+    "privacy": "Privacy Policy",
+    "footer": "Support and legal",
+    "main": "Site navigation"
   },
   "home": {
     "title": "Rototo: Rototed — Space Deflector Arcade Game for iPhone",
-    "description": "Rototo: Rototed is a space deflector arcade game for iPhone. Spin your shield, deflect enemy fire back at the swarm, and survive endless waves. Join the iOS TestFlight beta.",
+    "description": "Rototo: Rototed is a space deflector arcade game for iPhone. Rotate your shield, deflect enemy fire back at the swarm, and survive endless waves. Join the iOS TestFlight beta.",
     "tagline": "Rotate. Deflect. Survive.",
     "cta": "Get TestFlight"
   },
@@ -37,5 +41,285 @@
       "message": "Sorry, we couldn't find that page. Try going back or return to the homepage."
     },
     "goHome": "Go Home"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "Rototo: Rototed privacy: no data collected, on-device storage, and optional Apple Game Center.",
+    "effectiveDate": "Effective date: October 30, 2026",
+    "intro": "This Privacy Policy applies to the Rototo: Rototed iPhone game, published by Four Rays AB, based in Stockholm, Sweden.",
+    "sections": [
+      {
+        "id": "collection",
+        "title": "1. Data we collect",
+        "paragraphs": [
+          "We do not collect personal data through Rototo. Its App Store privacy label is “Data Not Collected”. There are no accounts, advertisements, analytics, or tracking. The game contains no third-party SDKs that collect data and makes no network calls of our own. Optional Apple Game Center services are described below."
+        ]
+      },
+      {
+        "id": "storage",
+        "title": "2. Data stored on your device",
+        "paragraphs": [
+          "Settings and achievement progress, including local gameplay counters used for achievements, are stored only in local files on your device. We do not receive these files. Deleting the app removes this local data. This does not delete records already held by Apple Game Center."
+        ]
+      },
+      {
+        "id": "game-center",
+        "title": "3. Apple Game Center",
+        "paragraphs": [
+          "Game Center is optional. If you sign in, the game submits your final score to the leaderboard and reports earned achievements to Apple. Apple handles Game Center data under its own privacy policy. We do not receive personal data from Game Center. You can play without signing in."
+        ]
+      },
+      {
+        "id": "haptics",
+        "title": "4. Haptic feedback",
+        "paragraphs": [
+          "Haptic feedback uses the device’s vibration hardware only. It does not collect or transmit data."
+        ]
+      },
+      {
+        "id": "children",
+        "title": "5. Children’s privacy",
+        "paragraphs": [
+          "Rototo does not collect personal data from anyone, including children. Optional Game Center services remain subject to Apple’s privacy policy and account settings."
+        ]
+      },
+      {
+        "id": "changes",
+        "title": "6. Changes to this policy",
+        "paragraphs": [
+          "If our privacy practices change, we will update this policy on this page and revise the effective date."
+        ]
+      }
+    ],
+    "applePolicy": "Read Apple’s Privacy Policy",
+    "contactTitle": "7. Contact us",
+    "contact": "For questions about this policy, contact Four Rays AB in Stockholm, Sweden:",
+    "supportLink": "Need help with the game? Visit Support."
+  },
+  "support": {
+    "title": "Support",
+    "description": "Help with Rototo: Rototed: controls, scoring, waves, achievements, Game Center, and contacting Four Rays AB.",
+    "intro": "Need a hand with Rototo: Rototed? Check the FAQ below or email Four Rays AB.",
+    "contact": "Contact us at",
+    "faqTitle": "Frequently asked questions",
+    "contentsLabel": "FAQ topics",
+    "privacyLink": "Read the Privacy Policy",
+    "sections": [
+      {
+        "id": "getting-started",
+        "title": "Getting started",
+        "questions": [
+          {
+            "id": "how-to-play",
+            "question": "How do I play?",
+            "paragraphs": [
+              "Rotate. Deflect. Survive.",
+              "Rototo stays in the center. Rotate to aim the shield into incoming fire, then use the deflected shots to destroy enemies. There is no fire button: enemy shots are your ammunition. Where a shot hits the curved shield affects its outgoing angle.",
+              "The first run starts with a short tutorial. Keep your shield between Rototo and incoming threats; it can also destroy enemies that collide with it."
+            ],
+            "items": []
+          },
+          {
+            "id": "controls",
+            "question": "How do the controls and joystick work?",
+            "paragraphs": [
+              "The virtual joystick is the default. Touch down anywhere away from the interface buttons to place its center, then drag in the direction you want the shield to face. A small push gives finer, slower turns; pushing farther turns faster. Lift your finger to release it.",
+              "For tap-to-aim controls, open Settings from the main menu and turn on “Classic controls”. Rototo then turns toward where you touch. The control scheme cannot be changed during a run, including from the pause menu."
+            ],
+            "items": []
+          },
+          {
+            "id": "devices",
+            "question": "Which devices are supported?",
+            "paragraphs": [
+              "Rototo is made for iPhone and requires iOS 17 or later."
+            ],
+            "items": []
+          },
+          {
+            "id": "price",
+            "question": "Is it free? Are there ads or in-app purchases?",
+            "paragraphs": [
+              "Yes, Rototo is free. There are no ads or in-app purchases."
+            ],
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": "scoring-survival",
+        "title": "Scoring and survival",
+        "questions": [
+          {
+            "id": "multiplier",
+            "question": "How does the score multiplier work?",
+            "paragraphs": [
+              "The multiplier starts at ×1. Each enemy kill awards its base points at the current multiplier, then adds 0.5 to the multiplier, up to ×8. Base points are Angular: 100, Ember: 150, Meteor: 200, and Node: 125.",
+              "After a kill, the multiplier holds for one second, then gradually drops toward ×1. Higher multipliers drain faster, so keep scoring kills to maintain them. Taking damage removes 1.0 from the multiplier, but it never falls below ×1. Decay stops while no enemies are alive.",
+              "Destroying every enemy from a wave also grants a bonus based on the wave number and your health before the wave-clear heal. That bonus is not multiplied."
+            ],
+            "items": []
+          },
+          {
+            "id": "waves",
+            "question": "How do waves and difficulty work?",
+            "paragraphs": [
+              "Survive endless waves with growing enemy groups and a changing mix of types. Every five waves forms a sector, with a new background palette. Nodes start appearing at wave 10.",
+              "Early waves normally wait for a full clear. From wave 21 onward, waves can overlap with enemies still alive. A wave can also advance after 10 seconds without a kill once all its enemies have spawned, so a lingering enemy does not stall the game. You only earn the clear bonus and healing by destroying every enemy belonging to that wave."
+            ],
+            "items": []
+          },
+          {
+            "id": "enemies",
+            "question": "What are the enemy types?",
+            "paragraphs": [],
+            "items": [
+              {
+                "name": "Angular",
+                "description": "The baseline shooter: moves around Rototo, aims at you, and tries to evade your shield. One hit destroys it."
+              },
+              {
+                "name": "Ember",
+                "description": "A more aggressive shooter with faster projectiles and longer firing range. One hit destroys it."
+              },
+              {
+                "name": "Meteor",
+                "description": "Charges into Rototo instead of shooting. Stop it with the shield or a deflected shot; a collision with Rototo causes damage."
+              },
+              {
+                "name": "Node",
+                "description": "A spinning shooter that takes two hits. Its appearance changes after the first hit."
+              }
+            ]
+          },
+          {
+            "id": "health",
+            "question": "How much health do I have? Can I heal?",
+            "paragraphs": [
+              "You start with three health points, shown by the circle around Rototo. Enemy shots and Meteor collisions cause damage. After a nonfatal hit you briefly flash and are invulnerable for one second.",
+              "Clearing all enemies from a wave restores one health point, up to the maximum of three. At zero health, the run ends."
+            ],
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": "achievements-game-center",
+        "title": "Achievements and Game Center",
+        "questions": [
+          {
+            "id": "achievements",
+            "question": "What achievements can I unlock?",
+            "paragraphs": [
+              "There are 12 achievements. Hitman and Veteran Rotator count across runs on this device; the other challenges are earned within a run. Tutorial actions do not count. A sector is five waves; no-hit sector awards are checked when the next sector begins."
+            ],
+            "items": [
+              {
+                "name": "Space Survivor",
+                "description": "Finish wave 5."
+              },
+              {
+                "name": "Deflector Extraordinaire",
+                "description": "Finish wave 20."
+              },
+              {
+                "name": "Eightball",
+                "description": "Reach the ×8 multiplier."
+              },
+              {
+                "name": "Flawless",
+                "description": "Complete a five-wave sector without taking a hit, then reach the next sector."
+              },
+              {
+                "name": "Untouchable",
+                "description": "Complete three consecutive sectors (15 waves) without taking a hit, then reach the next sector."
+              },
+              {
+                "name": "Last Stand",
+                "description": "Clear a wave with one health point remaining, before the wave-clear heal."
+              },
+              {
+                "name": "Full Circle",
+                "description": "Start wave 20 at full health."
+              },
+              {
+                "name": "Node Breaker",
+                "description": "Destroy a Node."
+              },
+              {
+                "name": "Meteor Sniper",
+                "description": "Destroy a Meteor with a deflected shot before it reaches you. Blocking it with the shield does not count."
+              },
+              {
+                "name": "High Performer",
+                "description": "Score 100,000 points in one run."
+              },
+              {
+                "name": "Hitman",
+                "description": "Destroy 500 enemies across runs."
+              },
+              {
+                "name": "Veteran Rotator",
+                "description": "Start 25 runs."
+              }
+            ]
+          },
+          {
+            "id": "game-center",
+            "question": "Why is the leaderboard missing, or my score not showing?",
+            "paragraphs": [
+              "The leaderboard uses Apple Game Center. Sign in under Settings → Game Center on your iPhone, check your internet connection, then reopen Rototo. The leaderboard entry is available after Game Center sign-in succeeds.",
+              "A nonzero final score is submitted at game over while signed in. Scores from offline or signed-out runs are not queued for later submission, and failed score submissions are not retried. Play another run after reconnecting.",
+              "Achievements are saved locally even without Game Center. Unconfirmed achievement reports are retried on a later successful sign-in or launch. You can play without Game Center, and a sign-in failure will not stop the game."
+            ],
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": "settings",
+        "title": "Settings and pausing",
+        "questions": [
+          {
+            "id": "sound-haptics",
+            "question": "Can I change the sound or haptics?",
+            "paragraphs": [
+              "Open Settings from the main menu or the pause menu. The “BGM” switch turns background music on or off. There is no separate in-game sound-effects volume control or haptics switch. Use your iPhone’s volume controls for audio; haptic feedback depends on your device’s support."
+            ],
+            "items": []
+          },
+          {
+            "id": "pause",
+            "question": "How do I pause or quit a run?",
+            "paragraphs": [
+              "Tap the pause button in the top-right corner. Choose “Resume” to continue, “Settings” to change background music, or “Quit” to return to the main menu. Quitting ends the current run; it is not saved for later. Sound effects are muted while paused, but background music continues if BGM is enabled."
+            ],
+            "items": []
+          }
+        ]
+      },
+      {
+        "id": "privacy-help",
+        "title": "Privacy and getting help",
+        "questions": [
+          {
+            "id": "data",
+            "question": "Does Rototo collect my data? Will reinstalling reset progress?",
+            "paragraphs": [
+              "We do not collect data through the game. Settings and achievement progress are stored only on your device, and deleting the app removes those local files. Reinstalling is not a way to fix sync problems without losing local progress. Apple separately handles any Game Center records already submitted."
+            ],
+            "items": []
+          },
+          {
+            "id": "bug-report",
+            "question": "How do I report a bug?",
+            "paragraphs": [
+              "Email contact@4rays.net with your iPhone model, iOS version, Rototo version, what happened, and the steps to reproduce it. For gameplay issues, include the wave and control scheme if you know them. A screenshot or short recording can help. Please do not send passwords or other sensitive information."
+            ],
+            "items": []
+          }
+        ]
+      }
+    ]
   }
 }

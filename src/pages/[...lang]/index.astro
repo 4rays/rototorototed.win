@@ -2,6 +2,7 @@
 import PageLayout from "@/layouts/PageLayout.astro";
 import Player from "@/components/Player.astro";
 import MusicToggle from "@/components/MusicToggle.astro";
+import Footer from "@/components/Footer.astro";
 import {GAME_NAME, PUBLISHER, TESTFLIGHT_URL} from "@/consts";
 import {
   getLocaleFromParams,
@@ -85,12 +86,9 @@ const structuredData = {
     <Player class="size-48" />
   </div>
 
-  <!-- Desktop: bottom-6 plus half of the CTA's 3.5rem height, less half a
-       text-xs line, lines the copyright up with the CTA's center. -->
-  <footer
+  <Footer
     slot="footer"
-    class="text-scene-foreground/50 px-6 pb-6 text-center font-mono text-xs md:fixed md:bottom-11 md:left-6 md:p-0"
-  >
-    © 2026 {PUBLISHER}
-  </footer>
+    locale={locale}
+    class="md:fixed md:bottom-6 md:left-6 md:p-0"
+  />
 </PageLayout>

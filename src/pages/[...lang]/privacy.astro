@@ -1,0 +1,44 @@
+---
+import InfoLayout from "@/layouts/InfoLayout.astro";
+import {
+  getLocaleFromParams,
+  getLocaleStaticPaths,
+  localizeUrl,
+  useTranslations
+} from "@/i18n/utils";
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const t = useTranslations(locale).privacy;
+---
+
+<InfoLayout title={t.title} description={t.description} locale={locale}>
+  <p class="policy-date text-muted-foreground">
+    <time datetime="2026-10-30">{t.effectiveDate}</time>
+  </p>
+  <p>{t.intro}</p>
+  {t.sections.map((section) => (
+    <section aria-labelledby={section.id}>
+      <h2 id={section.id}>{section.title}</h2>
+      {section.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+      {section.id === "game-center" && (
+        <p>
+          <a href="https://www.apple.com/legal/privacy/">{t.applePolicy}</a>
+        </p>
+      )}
+    </section>
+  ))}
+  <h2>{t.contactTitle}</h2>
+  <p>
+    {t.contact} <a href="mailto:contact@4rays.net">contact@4rays.net</a>
+  </p>
+  <hr />
+  <p>
+    <a href={localizeUrl("/support", locale)}>{t.supportLink}</a>
+  </p>
+</InfoLayout>

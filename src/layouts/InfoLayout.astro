@@ -1,0 +1,139 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import {GAME_NAME} from "@/consts";
+import {localeNames, locales, type Locale} from "@/i18n/constants";
+import {localizeUrl, useTranslations} from "@/i18n/utils";
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+}
+
+const {title, description, locale} = Astro.props;
+const t = useTranslations(locale);
+const otherLocale = locale === "en" ? "ja" : "en";
+const prefix = new RegExp(`^/(${locales.join("|")})(?=/|$)`);
+const basePath = Astro.url.pathname.replace(prefix, "") || "/";
+---
+
+<PageLayout title={title} description={description} locale={locale} localized>
+  <div class="bg-background/70 text-foreground border-scene-foreground/10 mx-auto max-w-3xl rounded-2xl border px-6 py-8 backdrop-blur-xl sm:px-10 sm:py-10">
+    <nav
+      aria-label={t.nav.main}
+      class="info-nav mb-10 flex flex-wrap items-center justify-between gap-4 text-sm"
+    >
+      <a href={localizeUrl("/", locale)} class="font-display">
+        {GAME_NAME}
+      </a>
+      <a
+        href={localizeUrl(basePath, otherLocale)}
+        lang={otherLocale}
+        hreflang={otherLocale}
+      >
+        {localeNames[otherLocale]}
+      </a>
+    </nav>
+    <article class="info-prose prose max-w-none">
+      <h1>{title}</h1>
+      <slot />
+    </article>
+  </div>
+</PageLayout>
+
+<style>
+  .info-prose {
+    --tw-prose-body: var(--foreground);
+    --tw-prose-headings: var(--foreground);
+    --tw-prose-links: var(--accent);
+    --tw-prose-bold: var(--foreground);
+    --tw-prose-bullets: var(--muted-foreground);
+    --tw-prose-counters: var(--muted-foreground);
+    --tw-prose-hr: var(--border);
+    /* One reading rhythm: paragraph, question, section. Keep these
+       independent of the typography plugin's size-based margins. */
+    --prose-paragraph-gap: 1rem;
+    --prose-question-gap: 2rem;
+    --prose-section-gap: 3rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .info-prose:lang(ja) {
+    line-height: 1.75;
+    line-break: strict;
+  }
+
+  .info-prose :global(h1) {
+    margin: 0 0 1.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .info-prose :global(h2) {
+    margin: var(--prose-section-gap) 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+    scroll-margin-top: 2rem;
+    text-wrap: balance;
+  }
+
+  .info-prose :global(h3) {
+    margin: var(--prose-question-gap) 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.5;
+    scroll-margin-top: 2rem;
+    text-wrap: balance;
+  }
+
+  .info-prose :global(h2 + h3) {
+    margin-top: 0;
+  }
+
+  .info-prose :global(p) {
+    margin: 0 0 var(--prose-paragraph-gap);
+    text-wrap: pretty;
+  }
+
+  .info-prose :global(ul) {
+    margin: 1rem 0 1.5rem;
+    padding-inline-start: 1.25rem;
+  }
+
+  .info-prose :global(li) {
+    margin-block: 0.5rem;
+    padding-inline-start: 0.25rem;
+    text-wrap: pretty;
+  }
+
+  .info-prose :global(.policy-date) {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .info-prose :global(hr) {
+    margin-block: var(--prose-section-gap) 1.5rem;
+  }
+
+  .info-prose > :global(:last-child),
+  .info-prose :global(section > :last-child) {
+    margin-bottom: 0;
+  }
+
+  .info-prose :global(a:hover),
+  .info-nav a:hover {
+    color: var(--primary);
+  }
+
+  .info-prose :global(a:focus-visible),
+  .info-nav a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+</style>

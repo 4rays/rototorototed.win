@@ -233,6 +233,10 @@
   text-decoration: var(--shiki-dark-text-decoration, inherit) !important;
 }
 
+a {
+  text-decoration: none;
+}
+
 ::selection {
   background: color-mix(in oklab, var(--accent) 30%, transparent);
 }
